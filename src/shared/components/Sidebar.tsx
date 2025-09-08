@@ -18,6 +18,10 @@ import {
     LayoutDashboard,
     ScanText,
     Newspaper,
+    Shield,
+    Building,
+    Briefcase,
+    Container
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
@@ -67,13 +71,14 @@ const menuSections: MenuSection[] = [
         title: "Gestión",
         items: [
             {
-                icon: <Users />,
-                label: "Usuarios",
+                icon: <LayoutDashboard />,
+                label: "Administración",
                 subItems: [
-                    { icon: <UserCheck />, label: "Empleados", href: "/users" },
-                    //   { icon: <Shield />, label: "Roles y Permisos", href: "/usuarios/roles" },
-                    //   { icon: <Building />, label: "Departamentos", href: "/usuarios/departamentos" },
-                    //   { icon: <Briefcase />, label: "Cargos", href: "/usuarios/cargos" },
+                    { icon: <UserCheck />, label: "Usuarios", href: "/users" },
+                    { icon: <Shield />, label: "Roles y Permisos", href: "/roles" },
+                    //{ icon: <Container />, label: "Departamentos", href: "/users" },
+                    { icon: <Building />, label: "Areas", href: "/areas" },
+                    //{ icon: <Briefcase />, label: "Cargos", href: "/users" },
                 ],
             },
         ],

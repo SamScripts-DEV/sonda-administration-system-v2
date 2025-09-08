@@ -1,13 +1,11 @@
-export default function UsersPage() {
+import { UserManagementDashboard } from "@/features/user";
+import { fetchUsers } from "@/features/user";
+
+export default async function UsersPage() {
+
+    const {data: users} = await fetchUsers()
+
     return (
-
-
-        <main>
-
-            <h1>Página de Usuarios</h1>
-            <p>Este es un HTML básico para verificar que existe en la web.</p>
-
-        </main>
-
+        <UserManagementDashboard initialUsers={users ?? []}/>
     );
 }

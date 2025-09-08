@@ -1,34 +1,14 @@
 "use client"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@shared/ui/avatar"
-import { Badge } from "./ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
-import { Separator } from "./ui/separator"
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar"
+import { Badge } from "@/shared/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { Separator } from "@/shared/components/ui/separator"
 import { User, Mail, Phone, MapPin, Building, Shield } from "lucide-react"
+import { User as UserProps } from "../types"
 
 interface UserDetailsProps {
-  user: {
-    id: string
-    firstName: string
-    lastName: string
-    username: string
-    email: string
-    phone: string
-    active: boolean
-    nationalId: string
-    imageUrl?: string
-    address: string
-    city: string
-    country: string
-    towerIds: string[]
-    departmentId: string
-    positionId?: string
-    createdAt: string
-    roles: { global: string[]; local: string[] }
-    towers: string[]
-    department: string
-    position?: string
-  }
+  user: UserProps
 }
 
 export function UserDetails({ user }: UserDetailsProps) {
@@ -60,15 +40,11 @@ export function UserDetails({ user }: UserDetailsProps) {
                   {user.active ? "Activo" : "Inactivo"}
                 </Badge>
               </div>
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center space-x-2 text-sm">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span>{user.email}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span>{user.phone}</span>
-                </div>
+              <div className="flex items-center gap-2 text-xs mt-2">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <span>{user.email}</span>
+                <Phone className="h-4 w-4 text-muted-foreground" />
+                <span>{Array.isArray(user.phone) ? user.phone.join(", ") : user.phone}</span>
               </div>
             </div>
           </div>
@@ -146,11 +122,11 @@ export function UserDetails({ user }: UserDetailsProps) {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Torres Asignadas</label>
+            <label className="text-sm font-medium text-muted-foreground">Áreas Asignadas</label>
             <div className="flex flex-wrap gap-2 mt-2">
-              {user.towers.map((tower, index) => (
+              {user.areas.map((area, index) => (
                 <Badge key={index} variant="outline">
-                  {tower}
+                  {area}
                 </Badge>
               ))}
             </div>
@@ -170,7 +146,7 @@ export function UserDetails({ user }: UserDetailsProps) {
           <div>
             <label className="text-sm font-medium text-muted-foreground">Roles Globales</label>
             <div className="flex flex-wrap gap-2 mt-2">
-              {user.roles.global.map((role, index) => (
+              {user.roles?.global.map((role, index) => (
                 <Badge key={index} className="bg-primary">
                   {role}
                 </Badge>
@@ -183,9 +159,9 @@ export function UserDetails({ user }: UserDetailsProps) {
           <div>
             <label className="text-sm font-medium text-muted-foreground">Roles Locales</label>
             <div className="flex flex-wrap gap-2 mt-2">
-              {user.roles.local.map((role, index) => (
+              {user.roles?.local.map((role, index) => (
                 <Badge key={index} variant="secondary">
-                  {role}
+                  {role.role}
                 </Badge>
               ))}
             </div>
