@@ -10,6 +10,8 @@ interface AreaDetailsProps {
 }
 
 export function AreaDetails({ area }: AreaDetailsProps) {
+  console.log(area);
+  
   const formatDate = (dateString?: string) => {
     if (!dateString) return "N/A"
     return new Date(dateString).toLocaleDateString("es-ES", {
@@ -82,8 +84,8 @@ export function AreaDetails({ area }: AreaDetailsProps) {
         <CardContent>
           {area.users && area.users.length > 0 ? (
             <div className="space-y-3">
-              {area.users.map((user) => (
-                <div key={user.userId} className="flex items-center justify-between p-3 border rounded-lg">
+              {area.users.map((user, idx) => (
+                <div key={user.userId ?? idx} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                       <Users className="h-4 w-4 text-primary" />
@@ -92,7 +94,7 @@ export function AreaDetails({ area }: AreaDetailsProps) {
                       <p className="font-medium">
                         {user.firstName} {user.lastName}
                       </p>
-                      <p className="text-sm text-muted-foreground">ID: {user.userId}</p>
+                      <p className="text-sm text-muted-foreground">Cargo: {user.position}</p>
                     </div>
                   </div>
                 </div>
@@ -118,15 +120,15 @@ export function AreaDetails({ area }: AreaDetailsProps) {
         <CardContent>
           {area.roles && area.roles.length > 0 ? (
             <div className="space-y-3">
-              {area.roles.map((role) => (
-                <div key={role.roleId} className="flex items-center justify-between p-3 border rounded-lg">
+              {area.roles.map((role, idx) => (
+                <div key={role.roleId ?? idx} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center">
                       <Shield className="h-4 w-4 text-accent" />
                     </div>
                     <div>
                       <p className="font-medium">{role.name}</p>
-                      <p className="text-sm text-muted-foreground">ID: {role.roleId}</p>
+
                     </div>
                   </div>
                 </div>

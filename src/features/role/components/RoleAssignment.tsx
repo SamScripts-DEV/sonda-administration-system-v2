@@ -11,45 +11,44 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar"
 import { Search, Users, Shield } from "lucide-react"
-import type { Role, Permission, AssignableUser } from "@/features/role"
-import type { Tower } from "@/features/tower"
+import type { Role, AssignableUserForRole, AssignableUsersByArea } from "@/features/role"
+import type { Area } from "@/features/area"
+import type { Permission } from "@/features/permission"
+import { useAssignableUsersForRole } from "@/features/role"
 
 interface RoleAssignmentProps {
   type: "users" | "permissions"
   role: Role
-  towers?: Tower[]
+  areas?: Area[]
   permissions?: Permission[]
   onSubmit: (data: {
     roleId: string
     userIds?: string[]
     permissionIds?: string[]
-    towerId?: string
+    areaId?: string
   }) => void
   onCancel: () => void
 }
 
-// Mock data for available users
-const mockAvailableUsers: AssignableUser[] = [
-  { userId: "3", firstName: "María", lastName: "López", towerId: "1", towerName: "Torre Norte" },
-  { userId: "4", firstName: "Juan", lastName: "Martínez", towerId: "2", towerName: "Torre Sur" },
-  { userId: "5", firstName: "Laura", lastName: "González", towerId: "3", towerName: "Torre Este" },
-  { userId: "6", firstName: "Pedro", lastName: "Sánchez", towerId: "1", towerName: "Torre Norte" },
-  { userId: "7", firstName: "Carmen", lastName: "Ruiz", towerId: "4", towerName: "Torre Oeste" },
-]
 
-export function RoleAssignment({ type, role, towers = [], permissions = [], onSubmit, onCancel }: RoleAssignmentProps) {
+
+export function RoleAssignment({ type, role, areas = [], permissions = [], onSubmit, onCancel }: RoleAssignmentProps) {
   const [selectedItems, setSelectedItems] = useState<string[]>([])
-  const [selectedTower, setSelectedTower] = useState<string>("")
+  const [selectedArea, setSelectedArea] = useState<string>("")
   const [searchTerm, setSearchTerm] = useState("")
+  const [areaError, setAreaError] = useState<string>("");
+
+
+  const { data: availableUsers = [] } = useAssignableUsersForRole(role.id)
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-
     if (type === "users") {
       onSubmit({
         roleId: role.id,
         userIds: selectedItems,
-        towerId: role.scope === "LOCAL" ? selectedTower : undefined,
+        areaId: role.scope === "LOCAL" ? selectedArea : undefined,
       })
     } else {
       onSubmit({
@@ -59,6 +58,31 @@ export function RoleAssignment({ type, role, towers = [], permissions = [], onSu
     }
   }
 
+
+  const getAvailableUsers = (): AssignableUserForRole[] => {
+    if (role.scope === "GLOBAL") {
+
+      return Array.isArray(availableUsers) && availableUsers.length > 0 && "userId" in availableUsers[0]
+        ? (availableUsers as AssignableUserForRole[])
+        : [];
+    }
+
+    if (
+      Array.isArray(availableUsers) &&
+      availableUsers.length > 0 &&
+      "areaId" in availableUsers[0]
+    ) {
+
+      if (selectedArea && selectedArea !== "all") {
+        const areaObj = (availableUsers as any[]).find((a) => a.areaId === selectedArea);
+        return areaObj ? areaObj.users : [];
+      }
+
+      return (availableUsers as AssignableUsersByArea[]).flatMap((a) => a.users);
+    }
+    return [];
+  };
+
   const handleItemToggle = (itemId: string, checked: boolean) => {
     setSelectedItems((prev) => (checked ? [...prev, itemId] : prev.filter((id) => id !== itemId)))
   }
@@ -67,18 +91,20 @@ export function RoleAssignment({ type, role, towers = [], permissions = [], onSu
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
   }
 
-  // Filter users based on role scope and selected tower
+  // Filter users based on role scope and selected area
   const getFilteredUsers = () => {
-    let filteredUsers = mockAvailableUsers
+    let filteredUsers = getAvailableUsers()
 
-    // Filter by role scope
-    if (role.scope === "LOCAL" && role.towerIds) {
-      filteredUsers = filteredUsers.filter((user) => role.towerIds!.includes(user.towerId))
-    }
+    // // Filter by role scope
+    // if (role.scope === "LOCAL" && role.areaIds) {
+    //   filteredUsers = filteredUsers.filter((user) => role.areaIds!.includes(user.areaId))
+    // }
 
-    // Filter by selected tower (for LOCAL roles)
-    if (selectedTower) {
-      filteredUsers = filteredUsers.filter((user) => user.towerId === selectedTower)
+    // Filter by selected area (for LOCAL roles)
+    if (selectedArea && selectedArea !== "all") {
+      filteredUsers = filteredUsers.filter((user) =>
+        user.areas.some((area) => area.areaId === selectedArea)
+      );
     }
 
     // Filter by search term
@@ -88,9 +114,9 @@ export function RoleAssignment({ type, role, towers = [], permissions = [], onSu
       )
     }
 
-    // Exclude already assigned users
-    const assignedUserIds = role.users?.map((u) => u.userId) || []
-    filteredUsers = filteredUsers.filter((user) => !assignedUserIds.includes(user.userId))
+    // // Exclude already assigned users
+    // const assignedUserIds = role.users?.map((u) => u.userId) || []
+    // filteredUsers = filteredUsers.filter((user) => !assignedUserIds.includes(user.userId))
 
     return filteredUsers
   }
@@ -116,36 +142,37 @@ export function RoleAssignment({ type, role, towers = [], permissions = [], onSu
     return filteredPermissions
   }
 
-  const availableTowers =
-    role.scope === "LOCAL" && role.towerIds ? towers.filter((tower) => role.towerIds!.includes(tower.id)) : []
+  const availableAreas =
+    role.scope === "LOCAL" && role.areaIds ? areas.filter((area) => role.areaIds!.includes(area.id)) : []
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <Card>
+    <form onSubmit={handleSubmit} className="h-full">
+      <Card className="flex flex-col max-h-[90vh]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             {type === "users" ? <Users className="h-5 w-5" /> : <Shield className="h-5 w-5" />}
             {type === "users" ? "Seleccionar Usuarios" : "Seleccionar Permisos"}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Tower Selection for LOCAL roles */}
-          {type === "users" && role.scope === "LOCAL" && availableTowers.length > 0 && (
+        <CardContent className="flex-1 flex flex-col space-y-4">
+          {/* Area Selection for LOCAL roles */}
+          {type === "users" && role.scope === "LOCAL" && availableAreas.length > 0 && (
             <div className="space-y-2">
-              <Label>Torre</Label>
-              <Select value={selectedTower} onValueChange={setSelectedTower}>
+              <Label>Área</Label>
+              <Select value={selectedArea} onValueChange={setSelectedArea}>
                 <SelectTrigger className="border-gray-300">
-                  <SelectValue placeholder="Seleccionar torre" />
+                  <SelectValue placeholder="Seleccionar Área" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas las torres disponibles</SelectItem>
-                  {availableTowers.map((tower) => (
-                    <SelectItem key={tower.id} value={tower.id}>
-                      {tower.name}
+                  <SelectItem value="all">Todas las áreas disponibles</SelectItem>
+                  {availableAreas.map((area) => (
+                    <SelectItem key={area.id} value={area.id}>
+                      {area.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+
             </div>
           )}
 
@@ -161,55 +188,57 @@ export function RoleAssignment({ type, role, towers = [], permissions = [], onSu
           </div>
 
           {/* Items List */}
-          <div className="max-h-96 overflow-y-auto space-y-2 border rounded-lg p-4">
-            {type === "users" ? (
-              getFilteredUsers().length > 0 ? (
-                getFilteredUsers().map((user) => (
-                  <div key={user.userId} className="flex items-center space-x-3 p-2 hover:bg-muted/50 rounded ">
+          <div className="flex-1 min-h-0">
+            <div className="h-full max-h-[50vh] overflow-y-auto space-y-2 border rounded-lg p-4">
+              {type === "users" ? (
+                getFilteredUsers().length > 0 ? (
+                  getFilteredUsers().map((user) => (
+                    <div key={user.userId} className="flex items-center space-x-3 p-2 hover:bg-muted/50 rounded ">
+                      <Checkbox
+                        id={`user-${user.userId}`}
+                        checked={selectedItems.includes(user.userId)}
+                        onCheckedChange={(checked) => handleItemToggle(user.userId, checked as boolean)}
+                        className="border-gray-300"
+                      />
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          {getInitials(user.firstName, user.lastName)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <Label htmlFor={`user-${user.userId}`} className="font-medium cursor-pointer">
+                          {user.firstName} {user.lastName}
+                        </Label>
+                        <p className="text-sm text-muted-foreground"> {user.areas.map((area) => area.areaName).join(", ")}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">No hay usuarios disponibles para asignar</p>
+                )
+              ) : getFilteredPermissions().length > 0 ? (
+                getFilteredPermissions().map((permission) => (
+                  <div key={permission.id} className="flex items-start space-x-3 p-2 hover:bg-muted/50 rounded">
                     <Checkbox
-                      id={`user-${user.userId}`}
-                      checked={selectedItems.includes(user.userId)}
-                      onCheckedChange={(checked) => handleItemToggle(user.userId, checked as boolean)}
-                      className="border-gray-300"
+                      id={`permission-${permission.id}`}
+                      checked={selectedItems.includes(permission.id)}
+                      onCheckedChange={(checked) => handleItemToggle(permission.id, checked as boolean)}
+                      className="mt-1 border-gray-300"
                     />
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                        {getInitials(user.firstName, user.lastName)}
-                      </AvatarFallback>
-                    </Avatar>
                     <div className="flex-1">
-                      <Label htmlFor={`user-${user.userId}`} className="font-medium cursor-pointer">
-                        {user.firstName} {user.lastName}
+                      <Label htmlFor={`permission-${permission.id}`} className="font-medium cursor-pointer">
+                        {permission.name}
                       </Label>
-                      <p className="text-sm text-muted-foreground">{user.towerName}</p>
+                      {permission.description && (
+                        <p className="text-sm text-muted-foreground mt-1">{permission.description}</p>
+                      )}
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-center text-muted-foreground py-8">No hay usuarios disponibles para asignar</p>
-              )
-            ) : getFilteredPermissions().length > 0 ? (
-              getFilteredPermissions().map((permission) => (
-                <div key={permission.id} className="flex items-start space-x-3 p-2 hover:bg-muted/50 rounded">
-                  <Checkbox
-                    id={`permission-${permission.id}`}
-                    checked={selectedItems.includes(permission.id)}
-                    onCheckedChange={(checked) => handleItemToggle(permission.id, checked as boolean)}
-                    className="mt-1 border-gray-300"
-                  />
-                  <div className="flex-1">
-                    <Label htmlFor={`permission-${permission.id}`} className="font-medium cursor-pointer">
-                      {permission.name}
-                    </Label>
-                    {permission.description && (
-                      <p className="text-sm text-muted-foreground mt-1">{permission.description}</p>
-                    )}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-muted-foreground py-8">No hay permisos disponibles para asignar</p>
-            )}
+                <p className="text-center text-muted-foreground py-8">No hay permisos disponibles para asignar</p>
+              )}
+            </div>
           </div>
 
           {/* Selection Summary */}
@@ -221,17 +250,20 @@ export function RoleAssignment({ type, role, towers = [], permissions = [], onSu
             </div>
           )}
         </CardContent>
-      </Card>
 
+        
+      </Card>
       {/* Actions */}
-      <div className="flex justify-end space-x-3 pt-4 border-t">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancelar
-        </Button>
-        <Button type="submit" disabled={selectedItems.length === 0}>
-          Asignar {type === "users" ? "Usuarios" : "Permisos"}
-        </Button>
-      </div>
+        <div className="flex justify-end space-x-3 pt-4 border-t">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancelar
+          </Button>
+          <Button type="submit" disabled={selectedItems.length === 0}>
+            Asignar {type === "users" ? "Usuarios" : "Permisos"}
+          </Button>
+        </div>
+
+
     </form>
   )
 }

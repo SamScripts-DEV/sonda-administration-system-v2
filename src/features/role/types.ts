@@ -3,7 +3,7 @@ export interface Role {
   name: string
   description?: string | null
   scope: "GLOBAL" | "LOCAL"
-  towerIds?: string[]
+  areaIds?: string[]
   createdAt?: string
   updatedAt?: string
   users?: AssignableUser[]
@@ -14,17 +14,34 @@ export interface AssignableUser {
   userId: string
   firstName: string
   lastName: string
-  towerId: string
-  towerName: string
+  areaId: string
+  areaName: string
 }
 
-export interface AssignableUsersByTower {
-  towerId: string
-  towerName: string
-  users: AssignableUser[]
+export interface AssignableUsersByArea {
+  areaId: string
+  areaName: string
+  users: AssignableUserForRole[]
 }
-export interface Permission {
-  id: string
+
+
+export interface AssignableUserForRole {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    areas: { areaId: string; areaName: string; }[];
+}
+
+
+export interface RoleData {
   name: string
-  description?: string
+  description?: string | null
+  scope: "GLOBAL" | "LOCAL"
+  areaIds?: string[]
+}
+
+
+export interface AddUserToRoleSelected {
+  userIds: string[]
+  areaId?: string
 }

@@ -4,75 +4,20 @@ import { useEffect, useState } from "react"
 import { Button } from "@/shared/components/ui/button"
 import { Input } from "@/shared/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
-import { AreaForm, AreaDetails, type Area } from "@/features/area"
+import { AreaForm, AreaDetails, type Area,
+  useAreas,
+  useCreateArea,
+  CreateAreaData,
+  useEditArea,
+  useDeleteArea
+} from "@/features/area"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/components/ui/dialog"
 import { Plus, Search, Building, Users, Shield, Edit, Trash2, Eye, Calendar } from "lucide-react"
 import { SectionTitle } from "@/shared/components/SectionTitle"
 import { useQueryClient } from "@tanstack/react-query"
 
-// Mock data
-const mockAreas: Area[] = [
-  {
-    id: "1",
-    name: "Torre Norte",
-    description: "Edificio principal de oficinas administrativas",
-    createdAt: "2024-01-15T10:00:00Z",
-    updatedAt: "2024-01-15T10:00:00Z",
-    users: [
-      { userId: "1", firstName: "Ana", lastName: "García" },
-      { userId: "2", firstName: "Luis", lastName: "Martínez" },
-      { userId: "3", firstName: "Carmen", lastName: "López" },
-    ],
-    roles: [
-      { roleId: "1", name: "Administrador Global" },
-      { roleId: "2", name: "Manager Torre Norte" },
-    ],
-  },
-  {
-    id: "2",
-    name: "Torre Sur",
-    description: "Centro de operaciones y logística",
-    createdAt: "2024-02-01T14:30:00Z",
-    updatedAt: "2024-02-10T09:15:00Z",
-    users: [
-      { userId: "4", firstName: "Miguel", lastName: "Fernández" },
-      { userId: "5", firstName: "Elena", lastName: "Ruiz" },
-    ],
-    roles: [
-      { roleId: "3", name: "Manager Torre Sur" },
-      { roleId: "4", name: "Operador Logístico" },
-    ],
-  },
-  {
-    id: "3",
-    name: "Torre Este",
-    description: "Departamento de tecnología e innovación",
-    createdAt: "2024-01-20T08:00:00Z",
-    updatedAt: "2024-03-05T16:45:00Z",
-    users: [
-      { userId: "6", firstName: "Carlos", lastName: "Rodríguez" },
-      { userId: "7", firstName: "Patricia", lastName: "Sánchez" },
-      { userId: "8", firstName: "Javier", lastName: "Moreno" },
-      { userId: "9", firstName: "Isabel", lastName: "Jiménez" },
-    ],
-    roles: [
-      { roleId: "5", name: "CTO" },
-      { roleId: "6", name: "Desarrollador Senior" },
-      { roleId: "7", name: "Analista de Sistemas" },
-    ],
-  },
-  {
-    id: "4",
-    name: "Torre Oeste",
-    description: null,
-    createdAt: "2024-03-01T12:00:00Z",
-    updatedAt: "2024-03-01T12:00:00Z",
-    users: [],
-    roles: [],
-  },
-]
 
-export function AreaManagementDashboard({ areas }: { areas: Area[] }) {
+export function AreaManagementDashboard({ initialAreas }: { initialAreas: Area[] }) {
   const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedArea, setSelectedArea] = useState<Area | null>(null)
@@ -82,8 +27,14 @@ export function AreaManagementDashboard({ areas }: { areas: Area[] }) {
 
 
   useEffect(() => {
-    queryClient.setQueryData(["areas"], areas)
-  }, [areas, queryClient])
+    queryClient.setQueryData(["areas"], initialAreas)
+  }, [initialAreas, queryClient])
+
+
+  const {data: areas = []} = useAreas()
+  const {mutate: createArea} = useCreateArea()
+  const {mutate: editArea} = useEditArea()
+  const {mutate: deleteArea} = useDeleteArea()
 
   const filteredAreas = areas.filter(
     (area) =>
@@ -94,6 +45,30 @@ export function AreaManagementDashboard({ areas }: { areas: Area[] }) {
   const totalUsers = areas.reduce((acc, area) => acc + (area.users?.length || 0), 0)
   const totalRoles = areas.reduce((acc, area) => acc + (area.roles?.length || 0), 0)
   const areasWithUsers = areas.filter((area) => (area.users?.length || 0) > 0).length
+
+
+  const handleCreateArea = (formData: CreateAreaData) => {
+    createArea(formData, {
+      onSuccess: () => setIsCreateDialogOpen(false),
+    })
+  }
+
+  const handleEditArea = (formData: CreateAreaData) => {
+    if (!selectedArea) return
+    editArea({ id: selectedArea.id, area: formData }, {
+      onSuccess: () => setIsEditDialogOpen(false),
+    })
+
+  }
+
+  const handleDeleteArea = (id: string) => {
+    deleteArea(id, {
+      onSuccess: () => {
+        setSelectedArea(null)
+        setIsDetailsDialogOpen(false)
+      },
+    })
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -109,7 +84,8 @@ export function AreaManagementDashboard({ areas }: { areas: Area[] }) {
               placeholder="Buscar torres..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-gray-300"
+              
             />
           </div>
 
@@ -125,10 +101,7 @@ export function AreaManagementDashboard({ areas }: { areas: Area[] }) {
                 <DialogTitle>Crear Nueva Área</DialogTitle>
               </DialogHeader>
               <AreaForm
-                onSubmit={(data) => {
-                  console.log("Create area:", data)
-                  setIsCreateDialogOpen(false)
-                }}
+                onSubmit={handleCreateArea}
                 onCancel={() => setIsCreateDialogOpen(false)}
               />
             </DialogContent>
@@ -166,11 +139,11 @@ export function AreaManagementDashboard({ areas }: { areas: Area[] }) {
                       className="h-8 w-8 p-0"
                     >
                       <Edit className="h-4 w-4" />
-                    </Button>
+                    </Button> 
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => console.log("Delete area:", area.id)}
+                      onClick={() => handleDeleteArea(area.id)}
                       className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -244,10 +217,7 @@ export function AreaManagementDashboard({ areas }: { areas: Area[] }) {
             {selectedArea && (
               <AreaForm
                 area={selectedArea}
-                onSubmit={(data) => {
-                  console.log("Update area:", data)
-                  setIsEditDialogOpen(false)
-                }}
+                onSubmit={handleEditArea}
                 onCancel={() => setIsEditDialogOpen(false)}
               />
             )}

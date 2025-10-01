@@ -11,27 +11,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/shared/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import type { Role } from "@/features/role"
-import type { Tower } from "@/features/tower"
+import type { Area } from "@/features/area"
 
 
 interface RoleFormProps {
   role?: Role
-  towers: Tower[]
+  areas: Area[]
   onSubmit: (data: {
     name: string
     description: string
     scope: "GLOBAL" | "LOCAL"
-    towerIds: string[]
+    areaIds: string[]
   }) => void
   onCancel: () => void
 }
 
-export function RoleForm({ role, towers, onSubmit, onCancel }: RoleFormProps) {
+export function RoleForm({ role, areas, onSubmit, onCancel }: RoleFormProps) {
   const [formData, setFormData] = useState({
     name: role?.name || "",
     description: role?.description || "",
     scope: role?.scope || ("GLOBAL" as "GLOBAL" | "LOCAL"),
-    towerIds: role?.towerIds || [],
+    areaIds: role?.areaIds || [],
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -45,8 +45,8 @@ export function RoleForm({ role, towers, onSubmit, onCancel }: RoleFormProps) {
       newErrors.name = "El nombre es requerido"
     }
 
-    if (formData.scope === "LOCAL" && formData.towerIds.length === 0) {
-      newErrors.towerIds = "Debe seleccionar al menos una torre para roles locales"
+    if (formData.scope === "LOCAL" && formData.areaIds.length === 0) {
+      newErrors.areasIds = "Debe seleccionar al menos una área para roles locales"
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -57,14 +57,14 @@ export function RoleForm({ role, towers, onSubmit, onCancel }: RoleFormProps) {
     onSubmit(formData)
   }
 
-  const handleTowerChange = (towerId: string, checked: boolean) => {
+  const handleAreaChange = (areaId: string, checked: boolean) => {
     setFormData((prev) => ({
       ...prev,
-      towerIds: checked ? [...prev.towerIds, towerId] : prev.towerIds.filter((id) => id !== towerId),
+      areaIds: checked ? [...prev.areaIds, areaId] : prev.areaIds.filter((id) => id !== areaId),
     }))
 
-    if (errors.towerIds) {
-      setErrors((prev) => ({ ...prev, towerIds: "" }))
+    if (errors.areaIds) {
+      setErrors((prev) => ({ ...prev, areaIds: "" }))
     }
   }
 
@@ -72,11 +72,11 @@ export function RoleForm({ role, towers, onSubmit, onCancel }: RoleFormProps) {
     setFormData((prev) => ({
       ...prev,
       scope,
-      towerIds: scope === "GLOBAL" ? [] : prev.towerIds,
+      areaIds: scope === "GLOBAL" ? [] : prev.areaIds,
     }))
 
-    if (errors.towerIds) {
-      setErrors((prev) => ({ ...prev, towerIds: "" }))
+    if (errors.areaIds) {
+      setErrors((prev) => ({ ...prev, areaIds: "" }))
     }
   }
 
@@ -144,22 +144,22 @@ export function RoleForm({ role, towers, onSubmit, onCancel }: RoleFormProps) {
 
             {formData.scope === "LOCAL" && (
               <div className="space-y-2">
-                <Label>Torres Asignadas *</Label>
+                <Label>Áreas Asignadas *</Label>
                 <div className="grid grid-cols-2 gap-3 p-4 border rounded-lg">
-                  {towers.map((tower) => (
-                    <div key={tower.id} className="flex items-center space-x-2">
+                  {areas.map((area) => (
+                    <div key={area.id} className="flex items-center space-x-2">
                       <Checkbox
-                        id={`tower-${tower.id}`}
-                        checked={formData.towerIds.includes(tower.id)}
-                        onCheckedChange={(checked) => handleTowerChange(tower.id, checked as boolean)}
+                        id={`area-${area.id}`}
+                        checked={formData.areaIds.includes(area.id)}
+                        onCheckedChange={(checked) => handleAreaChange(area.id, checked as boolean)}
                       />
-                      <Label htmlFor={`tower-${tower.id}`} className="text-sm font-normal cursor-pointer">
-                        {tower.name}
+                      <Label htmlFor={`area-${area.id}`} className="text-sm font-normal cursor-pointer">
+                        {area.name}
                       </Label>
                     </div>
                   ))}
                 </div>
-                {errors.towerIds && <p className="text-sm text-destructive">{errors.towerIds}</p>}
+                {errors.areaIds && <p className="text-sm text-destructive">{errors.areaIds}</p>}
               </div>
             )}
           </CardContent>

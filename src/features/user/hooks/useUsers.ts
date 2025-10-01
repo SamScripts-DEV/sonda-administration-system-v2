@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createUser, fetchUsers, fetchUsersForSelect, User } from "@/features/user";
+import { activateUser, createUser, deleteUser, fetchUsers, fetchUsersForSelect, updateUser, User, UserFormData } from "@/features/user";
 import { toast } from "sonner";
+import { use } from "react";
 
-export function useUsers() {
+export function useFetchUsers() {
     return useQuery({
         queryKey: ["users"],
         queryFn: async () => {
@@ -21,7 +22,7 @@ export function useUsersForSelect() {
     })
 }
 
-export function useCreteUser() {
+export function useCreateUser() {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -51,9 +52,9 @@ export function useCreteUser() {
                 positionId: formObj.positionId ?? "",
                 createdAt: new Date().toISOString(),
                 roles: formObj.roles ?? { global: [], local: [] },
-                rolesDetails: formObj.rolesDetails ?? { global: [], local: [] },
+                rolesDetailed: formObj.rolesDetails ?? { global: [], local: [] },
                 areas: formObj.areas ?? [],
-                areasDetails: formObj.areasDetails ?? [],
+                areasDetailed: formObj.areasDetails ?? [],
                 department: formObj.department ?? "",
                 position: formObj.position ?? "",
             };
@@ -89,6 +90,119 @@ export function useCreteUser() {
 }
 
 
+export function useEditUser() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, formData }: { id: string, formData: FormData }) => updateUser(id, formData),
+        onMutate: async ({ id, formData }) => {
+            await queryClient.cancelQueries({ queryKey: ["users"] });
+
+            const previousUsers = queryClient.getQueryData<User[]>(["users"]) ?? [];
+            const formObj = formDataToObject(formData)
+
+            const updatedUsers = previousUsers.map(user => user.id === id ? {
+                ...user,
+                ...formObj,
+                id,
+            } : user
+            );
+            queryClient.setQueryData(["users"], updatedUsers);
+            return { previousUsers };
+        },
+        onError: (_error, _variables, context: any) => {
+            if (context?.previousUsers) {
+                queryClient.setQueryData(["users"], context.previousUsers);
+            }
+            toast.error("Error al actualizar el usuario. Por favor, inténtalo de nuevo.");
+        },
+        onSuccess: (response, _varibles, context: any) => {
+            const updatedUser = response.data as User | undefined;
+            if (!updatedUser) {
+                toast.error("No se pudo obtener el usuario actualizado.");
+                return;
+            }
+            const previousUsers = queryClient.getQueryData<User[]>(["users"]) ?? [];
+            const updatedUsers = previousUsers.map(user =>
+                user.id === updatedUser.id ? updatedUser : user
+            );
+            queryClient.setQueryData(["users"], updatedUsers);
+            toast.success("Usuario actualizado con éxito");
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ["users"] })
+        }
+    })
+}
+
+export function useDeleteUser() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (userId: string) => deleteUser(userId),
+        onMutate: async (userId: string) => {
+            await queryClient.cancelQueries({ queryKey: ["users"] });
+
+            const previousUsers = queryClient.getQueryData<User[]>(["users"]) ?? [];
+
+            const updatedUsers = previousUsers.map(user =>
+                user.id === userId ? { ...user, active: false } : user
+            )
+
+            queryClient.setQueryData(["users"], updatedUsers);
+
+            return { previousUsers };
+        },
+        onError: (_error, _userId, context: any) => {
+            if (context?.previousUsers) {
+                queryClient.setQueryData(["users"], context.previousUsers);
+            }
+            toast.error("Error al inabilitar el usuario. Por favor, inténtalo de nuevo.");
+        },
+        onSuccess: (response) => {
+            toast.success("Usuario inabilitado con éxito");
+        },
+        onSettled: () => {
+            // queryClient.invalidateQueries({ queryKey: ["users"] })
+        }
+
+    })
+}
+
+export function useActivateUser() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (userId: string) => activateUser(userId),
+        onMutate: async (userId: string) => {
+            await queryClient.cancelQueries({ queryKey: ["users"] });
+
+            const previousUsers = queryClient.getQueryData<User[]>(["users"]) ?? [];
+
+            const updatedUsers = previousUsers.map(user =>
+                user.id === userId ? { ...user, active: true } : user
+            )
+
+            queryClient.setQueryData(["users"], updatedUsers);
+
+            return { previousUsers };
+        },
+        onError: (_error, _userId, context: any) => {
+            if (context?.previousUsers) {
+                queryClient.setQueryData(["users"], context.previousUsers);
+            }
+            toast.error("Error al activar el usuario. Por favor, inténtalo de nuevo.");
+        },
+        onSuccess: (response) => {
+            toast.success("Usuario activado con éxito");
+        },
+        onSettled: () => {
+            // queryClient.invalidateQueries({ queryKey: ["users"] })
+        }
+
+    })
+}
+
+
 function formDataToObject(formData: FormData): Record<string, any> {
     const obj: Record<string, any> = {};
     formData.forEach((value, key) => {
@@ -102,4 +216,29 @@ function formDataToObject(formData: FormData): Record<string, any> {
         }
     });
     return obj;
+}
+
+
+//function to convert UserFormData to FormData, including an optional image file
+export function userFormDataToFormData(formData: UserFormData, imageFile?: File): FormData {
+    const data = new FormData();
+    data.append("firstName", formData.firstName);
+    data.append("lastName", formData.lastName);
+    data.append("username", formData.username);
+    data.append("email", formData.email);
+    data.append("passwordHash", formData.passwordHash ?? "");
+    (Array.isArray(formData.phone) ? formData.phone : [formData.phone]).forEach(phone => data.append("phone[]", phone));
+    data.append("active", String(formData.active));
+    data.append("nationalId", formData.nationalId);
+    if (imageFile) {
+        data.append("imageUrl", imageFile);
+    }
+    if (formData.address) data.append("address", formData.address);
+    if (formData.city) data.append("city", formData.city);
+    if (formData.country) data.append("country", formData.country);
+    if (formData.province) data.append("province", formData.province);
+    formData.areaIds.forEach(id => data.append("areaIds[]", id));
+    data.append("departmentId", formData.departmentId);
+    if (formData.positionId) data.append("positionId", formData.positionId);
+    return data;
 }

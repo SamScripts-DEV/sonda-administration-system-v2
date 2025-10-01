@@ -6,12 +6,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu"
 import { MoreHorizontal, Edit, Trash2, Eye, Users, Shield } from "lucide-react"
 import type { Role } from "@/features/role"
-import type { Tower } from "@/features/tower"
+import type { Area } from "@/features/area"
 
 
 interface RoleTableProps {
   roles: Role[]
-  towers: Tower[]
+  areas: Area[]
   onEdit: (role: Role) => void
   onDelete: (role: Role) => void
   onViewDetails: (role: Role) => void
@@ -21,16 +21,16 @@ interface RoleTableProps {
 
 export function RoleTable({
   roles,
-  towers,
+  areas,
   onEdit,
   onDelete,
   onViewDetails,
   onAssignUsers,
   onAssignPermissions,
 }: RoleTableProps) {
-  const getTowerNames = (towerIds?: string[]) => {
-    if (!towerIds || towerIds.length === 0) return "N/A"
-    return towerIds.map((id) => towers.find((tower) => tower.id === id)?.name || id).join(", ")
+  const getAreaNames = (areaIds?: string[]) => {
+    if (!areaIds || areaIds.length === 0) return "N/A"
+    return areaIds.map((id) => areas.find((area) => area.id === id)?.name || id).join(", ")
   }
 
   const formatDate = (dateString?: string) => {
@@ -72,8 +72,8 @@ export function RoleTable({
                 </Badge>
               </TableCell>
               <TableCell className="max-w-xs">
-                <div className="truncate" title={getTowerNames(role.towerIds)}>
-                  {getTowerNames(role.towerIds)}
+                <div className="truncate" title={getAreaNames(role.areaIds)}>
+                  {getAreaNames(role.areaIds)}
                 </div>
               </TableCell>
               <TableCell>

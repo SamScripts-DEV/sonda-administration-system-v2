@@ -13,49 +13,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar"
 import { Upload, X } from "lucide-react"
 import type { User, UserFormData } from "@/features/user"
-import { Area, useAreas } from "@/features/area"
-import { ApiResponse } from "@/shared/types/api"
+import { useAreas } from "@/features/area"
 import { useDepartments } from "@/features/department"
 import { usePositions } from "@/features/position"
-import { useCreteUser } from "@/features/user"
-import { toast } from "sonner"
+
 
 
 interface UserFormProps {
     user?: User
-    onSubmit: (data: UserFormData) => void
+    onSubmit: (data: UserFormData, imageFile?: File) => void
     onCancel: () => void
 }
 
-
-
-// Mock data for dropdowns
-const mockDepartments = [
-    { id: "1", name: "Recursos Humanos" },
-    { id: "2", name: "Tecnología" },
-    { id: "3", name: "Ventas" },
-    { id: "4", name: "Marketing" },
-]
-
-const mockPositions = [
-    { id: "1", name: "Directora" },
-    { id: "2", name: "Manager" },
-    { id: "3", name: "Desarrollador Senior" },
-    { id: "4", name: "Analista" },
-]
-
-const mockTowers = [
-    { id: "1", name: "Torre Norte" },
-    { id: "2", name: "Torre Sur" },
-    { id: "3", name: "Torre Este" },
-    { id: "4", name: "Torre Oeste" },
-]
 
 export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
     const { data: areas = [] } = useAreas();
     const { data: departments = [] } = useDepartments()
     const { data: positions = [] } = usePositions()
-    const { mutate, isError, error } = useCreteUser();
+
 
     const [formData, setFormData] = useState<UserFormData>({
         firstName: user?.firstName || "",
@@ -71,10 +46,11 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
         city: user?.city || "",
         country: user?.country || "",
         province: user?.province || "",
-        areaIds: user?.areasDetails?.map((area) => area.id) || [],
+        areaIds: user?.areasDetailed?.map((area) => area.id) || [],
         departmentId: user?.departmentId || "",
         positionId: user?.positionId || "",
     })
+
 
     const [imagePreview, setImagePreview] = useState<string | null>(user?.imageUrl || null)
     const [imageFile, setImageFile] = useState<File | null>(null)
@@ -107,39 +83,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        const data = new FormData();
-
-        data.append("firstName", formData.firstName);
-        data.append("lastName", formData.lastName);
-        data.append("username", formData.username);
-        data.append("email", formData.email);
-        data.append("passwordHash", formData.passwordHash);
-
-        (Array.isArray(formData.phone) ? formData.phone : [formData.phone]).forEach(phone => data.append("phone[]", phone));
-
-        data.append("active", String(formData.active));
-        data.append("nationalId", formData.nationalId);
-
-        if (imageFile) {
-            data.append("imageUrl", imageFile);
-        }
-
-        if (formData.address) data.append("address", formData.address);
-        if (formData.city) data.append("city", formData.city);
-        if (formData.country) data.append("country", formData.country);
-        if (formData.province) data.append("province", formData.province);
-
-        formData.areaIds.forEach(id => data.append("areaIds[]", id));
-
-        data.append("departmentId", formData.departmentId);
-        if (formData.positionId) data.append("positionId", formData.positionId);
-
-        mutate(data, {
-            onSuccess: () => {
-                onCancel();
-            }
-        });
+        onSubmit(formData, imageFile || undefined);
     };
 
     const getInitials = (firstName: string, lastName: string) => {
@@ -199,7 +143,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <Label htmlFor="firstName">Nombre *</Label>
+                            <Label htmlFor="firstName">Nombres *</Label>
                             <Input
                                 id="firstName"
                                 value={formData.firstName}
@@ -209,7 +153,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                             />
                         </div>
                         <div>
-                            <Label htmlFor="lastName">Apellido *</Label>
+                            <Label htmlFor="lastName">Apellidos *</Label>
                             <Input
                                 id="lastName"
                                 value={formData.lastName}

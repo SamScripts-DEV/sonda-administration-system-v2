@@ -37,12 +37,12 @@ export interface User {
   positionId?: string
   createdAt: string
   roles?: UserRoles
-  rolesDetails?: {
+  rolesDetailed?: {
     global: UserRoleDetailed[];
     local: UserLocalRoleDetailed[];
   }
   areas: string[]
-  areasDetails?: {
+  areasDetailed?: {
     id: string;
     name: string;
   }[]

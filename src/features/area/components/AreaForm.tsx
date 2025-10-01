@@ -80,7 +80,7 @@ export function AreaForm({ area, onSubmit, onCancel }: AreaFormProps) {
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
                   placeholder="Ingrese el nombre de la torre"
-                  className={errors.name ? "border-destructive" : ""}
+                  className={`border-gray-300 ${errors.name ? "border-destructive" : ""}`}
                 />
                 {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
               </div>
@@ -93,7 +93,8 @@ export function AreaForm({ area, onSubmit, onCancel }: AreaFormProps) {
                   onChange={(e) => handleInputChange("description", e.target.value)}
                   placeholder="Ingrese una descripción opcional"
                   rows={3}
-                  className={errors.description ? "border-destructive" : ""}
+                  className={`border-gray-300 ${errors.name ? "border-destructive" : ""}`}
+
                 />
                 {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
               </div>

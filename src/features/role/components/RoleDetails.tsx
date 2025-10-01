@@ -3,22 +3,27 @@
 import { Badge } from "@/shared/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar"
-import { Shield, Users, Building, Calendar, FileText } from "lucide-react"
+import { Shield, Users, Building, Calendar, FileText, X } from "lucide-react"
 import type { Role } from "@/features/role"
-import type { Tower } from "@/features/tower"
+import type { Area } from "@/features/area"
+import { Button } from "@/shared/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip"
 
 interface RoleDetailsProps {
   role: Role
-  towers: Tower[]
+  areas: Area[]
+  onRemoveUser: (userId: string, areaId?: string) => void
+  onRemovePermission: (permissionId: string) => void
 }
 
-export function RoleDetails({ role, towers }: RoleDetailsProps) {
-  const getTowerNames = (towerIds?: string[]) => {
-    if (!towerIds || towerIds.length === 0) return []
-    return towerIds
-      .map((id) => towers.find((tower) => tower.id === id))
+export function RoleDetails({ role, areas, onRemoveUser, onRemovePermission }: RoleDetailsProps) {
+
+  const getAreaNames = (areaIds?: string[]) => {
+    if (!areaIds || areaIds.length === 0) return []
+    return areaIds
+      .map((id) => areas.find((area) => area.id === id))
       .filter(Boolean)
-      .map((tower) => tower!.name)
+      .map((area) => area!.name)
   }
 
   const formatDate = (dateString?: string) => {
@@ -85,7 +90,7 @@ export function RoleDetails({ role, towers }: RoleDetailsProps) {
       </Card>
 
       {/* Scope and Towers */}
-      {role.scope === "LOCAL" && role.towerIds && role.towerIds.length > 0 && (
+      {role.scope === "LOCAL" && role.areaIds && role.areaIds.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -95,9 +100,9 @@ export function RoleDetails({ role, towers }: RoleDetailsProps) {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {getTowerNames(role.towerIds).map((towerName, index) => (
+              {getAreaNames(role.areaIds).map((areaName, index) => (
                 <Badge key={index} variant="outline" className="px-3 py-1">
-                  {towerName}
+                  {areaName}
                 </Badge>
               ))}
             </div>
@@ -128,9 +133,26 @@ export function RoleDetails({ role, towers }: RoleDetailsProps) {
                       <p className="font-medium">
                         {user.firstName} {user.lastName}
                       </p>
-                      <p className="text-sm text-muted-foreground">{user.towerName}</p>
+                      <p className="text-sm text-muted-foreground">{user.areaName}</p>
                     </div>
                   </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => onRemoveUser(user.userId, role.scope === "LOCAL" ? role.areaIds?.[0] : undefined)}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Quitar usuario
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               ))}
             </div>
@@ -150,10 +172,28 @@ export function RoleDetails({ role, towers }: RoleDetailsProps) {
         </CardHeader>
         <CardContent>
           {role.permissions && role.permissions.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-3">
               {role.permissions.map((permission) => (
-                <div key={permission.id} className="p-3 border rounded-lg">
+                <div key={permission.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <p className="font-medium text-sm">{permission.name}</p>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => onRemovePermission(permission.id)}
+
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Quitar permiso
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               ))}
             </div>

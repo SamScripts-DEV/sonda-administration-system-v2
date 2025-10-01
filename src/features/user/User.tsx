@@ -4,48 +4,21 @@ import { useEffect, useState } from "react"
 import { Button } from "@/shared/components/ui/button"
 import { Input } from "@/shared/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
-import { UserTable, UserForm, UserDetails, User, useUsers } from "@/features/user"
+import { UserTable, UserForm, UserDetails, User,
+    useFetchUsers, 
+    useCreateUser,
+    useEditUser,
+    useDeleteUser,
+    UserFormData,
+    userFormDataToFormData,
+    useActivateUser
+ } from "@/features/user"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/components/ui/dialog"
 import { Plus, Search, Users, UserCheck, UserX, Building } from "lucide-react"
 import { SectionTitle } from "@/shared/components/SectionTitle"
 import { useQueryClient } from "@tanstack/react-query"
 
 
-
-// Mock data
-const mockUsers: User[] = [
-    {
-        id: "1",
-        firstName: "Ana",
-        lastName: "García",
-        username: "agarcia",
-        email: "ana.garcia@company.com",
-        phone: ["+34 612 345 678"],
-        active: true,
-        nationalId: "12345678A",
-        imageUrl: "/professional-woman-diverse.png",
-        address: "Calle Mayor 123",
-        city: "Madrid",
-        country: "España",
-        province: "Madrid",
-        departmentId: "1",
-        positionId: "1",
-        createdAt: "2024-01-15",
-        roles: { global: ["Admin"], local: [{ area: "1", role: "Manager" }] },
-        rolesDetails: {
-            global: [{ id: "1", name: "Admin" }],
-            local: [{ area: { id: "1", name: "Torre Norte" }, role: { id: "1", name: "Manager" } }],
-        },
-        areas: ["Torre Norte", "Torre Sur", "Torre Este"],
-        areasDetails: [
-            { id: "1", name: "Torre Norte" },
-            { id: "2", name: "Torre Sur" },
-            { id: "3", name: "Torre Este" },
-        ],
-        department: "Recursos Humanos",
-        position: "Directora",
-    },
-]
 
 export function UserManagementDashboard({ initialUsers }: { initialUsers: User[] }) {
     const queryClient = useQueryClient()
@@ -59,7 +32,12 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
         queryClient.setQueryData(["users"], initialUsers);
     }, [initialUsers, queryClient]);
 
-    const { data: users = [] } = useUsers();
+    const { data: users = [] } = useFetchUsers();
+    const {mutate: createUser} = useCreateUser();
+    const {mutate: editUser} = useEditUser();
+    const {mutate: deleteUser} = useDeleteUser();
+    const {mutate: activateUser} = useActivateUser();
+
 
     users.forEach((user, idx) => {
         if (!user.firstName || !user.lastName || !user.email || !user.username) {
@@ -77,6 +55,31 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
 
     const activeUsers = users.filter((user) => user.active).length
     const inactiveUsers = users.filter((user) => !user.active).length
+
+    const handleCreateUser = (formData: UserFormData, imageFile?: File ) => {
+        const data =  userFormDataToFormData(formData, imageFile);
+        createUser(data, {
+            onSuccess: () => setIsCreateDialogOpen(false)
+        });
+    };
+
+
+    const handleEditUser = (formData: UserFormData, imageFile?: File ) => {
+        if (!selectedUser) return;
+        const data = userFormDataToFormData(formData, imageFile);
+        editUser({id: selectedUser.id, formData: data}, {
+            onSuccess: () => setIsEditDialogOpen(false)
+        });
+
+    }
+
+    const handleDeleteUser = (user:User) => {
+        deleteUser(user.id)
+    }
+
+    const handleActivateUser = (user: User) => {
+        activateUser(user.id)
+    }
 
     return (
         <div className="min-h-screen bg-background">
@@ -150,10 +153,7 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
                                 <DialogTitle>Crear Nuevo Usuario</DialogTitle>
                             </DialogHeader>
                             <UserForm
-                                onSubmit={(data) => {
-                                    console.log("Create user:", data)
-                                    setIsCreateDialogOpen(false)
-                                }}
+                                onSubmit={handleCreateUser}
                                 onCancel={() => setIsCreateDialogOpen(false)}
                             />
                         </DialogContent>
@@ -172,9 +172,8 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
                                 setSelectedUser(user)
                                 setIsEditDialogOpen(true)
                             }}
-                            onDelete={(user) => {
-                                console.log("Delete user:", user.id)
-                            }}
+                            onDelete={handleDeleteUser}
+                            onActivate={handleActivateUser}
                             onViewDetails={(user) => {
                                 setSelectedUser(user)
                                 setIsDetailsDialogOpen(true)
@@ -198,10 +197,7 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
                         {selectedUser && (
                             <UserForm
                                 user={selectedUser}
-                                onSubmit={(data) => {
-                                    console.log("Update user:", data)
-                                    setIsEditDialogOpen(false)
-                                }}
+                                onSubmit={handleEditUser}
                                 onCancel={() => setIsEditDialogOpen(false)}
                             />
                         )}

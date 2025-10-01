@@ -12,12 +12,13 @@ interface UserTableProps {
   users: User[]
   onEdit: (user: User) => void
   onDelete: (user: User) => void
+  onActivate: (user: User) => void
   onViewDetails: (user: User) => void
   onAssignRoles: (user: User) => void
   onUploadImage: (user: User) => void
 }
 
-export function UserTable({ users, onEdit, onDelete, onViewDetails, onAssignRoles, onUploadImage }: UserTableProps) {
+export function UserTable({ users, onEdit, onDelete, onViewDetails, onActivate,onAssignRoles, onUploadImage }: UserTableProps) {
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
   }
@@ -97,20 +98,29 @@ export function UserTable({ users, onEdit, onDelete, onViewDetails, onAssignRole
                       <Edit className="mr-2 h-4 w-4" />
                       Editar
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onAssignRoles(user)}>
+                    {/* <DropdownMenuItem onClick={() => onAssignRoles(user)}>
                       <UserPlus className="mr-2 h-4 w-4" />
                       Asignar roles
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onUploadImage(user)}>
+                    </DropdownMenuItem> */}
+                    {/* <DropdownMenuItem onClick={() => onUploadImage(user)}>
                       <Upload className="mr-2 h-4 w-4" />
                       Subir imagen
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuItem
-                      onClick={() => onDelete(user)}
-                      className="text-destructive focus:text-destructive"
+                      onClick={() => user.active ? onDelete(user) : onActivate(user)}
+                      className={user.active ? "text-destructive focus:text-destructive" : ""}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Eliminar
+                      {user.active ? (
+                        <>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Eliminar
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Activar
+                        </>
+                      )}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

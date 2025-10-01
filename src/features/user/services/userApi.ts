@@ -41,9 +41,10 @@ export async function createUser(formData: FormData): Promise<ApiResponse<User>>
             }
         );
         return response.data;
-        
+
     } catch (error: any) {
         console.log(error);
+
         if (error.response && error.response.data) {
             throw new Error(error.response.data);
         }
@@ -51,5 +52,49 @@ export async function createUser(formData: FormData): Promise<ApiResponse<User>>
     }
 }
 
+export async function updateUser(userId: string, formData: FormData): Promise<ApiResponse<User>> {
+    try {
+        const response = await api.patch<ApiResponse<User>>(endpoints.users.updateUser(userId),
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            }
+        );
+        return response.data;
 
+    } catch (error: any) {
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data);
+        }
+        throw new Error(error.message || "An unexpected error occurred");
 
+    }
+}
+
+export async function deleteUser(userId: string): Promise<ApiResponse<string>> {
+    try {
+        const response = await api.delete<ApiResponse<string>>(endpoints.users.deleteUser(userId));
+        return response.data;
+    } catch (error: any) {
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data);
+        }
+        throw new Error(error.message || "An unexpected error occurred");
+
+    }
+}
+
+export async function activateUser(userId: string): Promise<ApiResponse<string>> {
+    try {
+        const response = await api.patch<ApiResponse<string>>(endpoints.users.activateUser(userId));
+        return response.data;
+    } catch (error: any) {
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data);
+        }
+        throw new Error(error.message || "An unexpected error occurred");
+    }
+
+}
