@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
+import { useAuth } from "@/context/AuthContext"
 import {
     Home,
     Ticket,
@@ -36,6 +37,8 @@ import { Separator } from "./ui/separator"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import Image from "next/image"
+
 
 
 function getInitials(name: string) {
@@ -87,9 +90,12 @@ const menuSections: MenuSection[] = [
 ]
 
 export default function Sidebar({ isHidden = false }: { isHidden?: boolean }) {
+    const { user, logoutAuth } = useAuth()
     const [isExpanded, setIsExpanded] = useState(false)
     const [expandedItems, setExpandedItems] = useState<string[]>([])
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
+    const [imgLoaded, setImgLoaded] = useState(false);
+
     const pathname = usePathname()
 
 
@@ -149,7 +155,7 @@ export default function Sidebar({ isHidden = false }: { isHidden?: boolean }) {
                     </div>
                 ) : (
                     <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <img src="/iconSonda.jpeg" alt="Logo Sonda" />
+                        <img src="/logoSONDA.png" alt="Logo Sonda" />
                     </div>
                 )}
             </div>
@@ -223,26 +229,40 @@ export default function Sidebar({ isHidden = false }: { isHidden?: boolean }) {
                             )}
                         >
                             <Avatar className="h-8 w-8">
-                                <AvatarImage src={"/placeholder.svg"} />
-                                <AvatarFallback className="bg-blue-600 text-white">{getInitials("Samuel Cuti")}</AvatarFallback>
+                                {user?.imageUrl && (
+                                    <Image
+                                        src={user.imageUrl}
+                                        alt="Avatar"
+                                        width={32}
+                                        height={32}
+                                        className="rounded-full object-cover"
+                                        style={{ display: "block" }}
+                                        onLoadingComplete={() => setImgLoaded(true)}
+                                        onError={() => setImgLoaded(false)}
+                                    />
+                                )}
+                                {/* Fallback visible si no hay imagen o aún no cargó */}
+                                {(!user?.imageUrl || !imgLoaded) && (
+                                    <AvatarFallback className="bg-blue-600 text-white">
+                                        {user ? getInitials(user.fullName) : " "}
+                                    </AvatarFallback>
+                                )}
                             </Avatar>
                             {shouldStayExpanded && (
                                 <div className="flex-1 text-left">
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white">{"Samuel Cuti"}</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">{typeof "DEV" === "string"
-                                        ? "DEV"
-                                        : "Operador"}</p>
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.fullName}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{user?.position}</p>
                                 </div>
                             )}
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
                         <div className="px-2 py-1.5">
-                            <p className="text-sm font-medium">{"Samuel Cuti"}</p>
-                            <p className="text-xs text-gray-500">{"samuel.cuti@example.com"}</p>
+                            <p className="text-sm font-medium">{user?.fullName}</p>
+                            <p className="text-xs text-gray-500">{user?.email}</p>
                         </div>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="flex items-center gap-2 text-red-600 dark:text-red-400">
+                        <DropdownMenuItem className="flex items-center gap-2 text-red-600 dark:text-red-400" onClick={logoutAuth}>
                             <LogOut className="h-4 w-4" />
                             <span>Cerrar Sesión</span>
                         </DropdownMenuItem>

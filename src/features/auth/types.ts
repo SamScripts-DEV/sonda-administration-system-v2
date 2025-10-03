@@ -16,6 +16,8 @@ export interface UserPayload {
   areas: Area[];
   roles: Role[];
   permissions: string[];
+  fullName: string;
+  position: string
 }
 
 export interface LoginDto {
