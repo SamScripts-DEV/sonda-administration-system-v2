@@ -99,7 +99,7 @@ export function RoleForm({ role, areas, onSubmit, onCancel }: RoleFormProps) {
                   if (errors.name) setErrors((prev) => ({ ...prev, name: "" }))
                 }}
                 placeholder="Ej: Administrador, Manager, Empleado"
-                className={`border-gray-300 ${errors.name ? "border-destructive" : ""}`}
+                className={`${errors.name ? "border-destructive" : ""}`}
               />
               {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
             </div>
@@ -112,7 +112,7 @@ export function RoleForm({ role, areas, onSubmit, onCancel }: RoleFormProps) {
                 onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
                 placeholder="Descripción del rol y sus responsabilidades"
                 rows={3}
-                className="border-gray-300"
+
               />
             </div>
           </CardContent>
@@ -127,18 +127,18 @@ export function RoleForm({ role, areas, onSubmit, onCancel }: RoleFormProps) {
             <div className="space-y-2">
               <Label>Alcance del Rol *</Label>
               <Select value={formData.scope} onValueChange={handleScopeChange}>
-                <SelectTrigger className="border-gray-300 w-full">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Seleccionar alcance" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="GLOBAL">Global - Aplica a toda la organización</SelectItem>
-                  <SelectItem value="LOCAL">Local - Aplica a torres específicas</SelectItem>
+                  <SelectItem value="LOCAL">Local - Aplica a áreas específicas</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">
                 {formData.scope === "GLOBAL"
                   ? "Este rol tendrá permisos en toda la organización"
-                  : "Este rol solo tendrá permisos en las torres seleccionadas"}
+                  : "Este rol solo tendrá permisos en las áreas seleccionadas"}
               </p>
             </div>
 

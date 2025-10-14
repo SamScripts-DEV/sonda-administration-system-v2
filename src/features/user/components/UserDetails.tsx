@@ -36,7 +36,7 @@ export function UserDetails({ user }: UserDetailsProps) {
                   </h2>
                   <p className="text-muted-foreground">@{user.username}</p>
                 </div>
-                <Badge variant={user.active ? "default" : "secondary"} className={user.active ? "bg-accent" : ""}>
+                <Badge variant={user.active ? "success" : "secondary"}>
                   {user.active ? "Activo" : "Inactivo"}
                 </Badge>
               </div>

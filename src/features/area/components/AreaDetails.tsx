@@ -103,7 +103,7 @@ export function AreaDetails({ area }: AreaDetailsProps) {
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No hay usuarios asignados a esta torre</p>
+              <p>No hay usuarios asignados a esta área</p>
             </div>
           )}
         </CardContent>
@@ -137,7 +137,7 @@ export function AreaDetails({ area }: AreaDetailsProps) {
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No hay roles asignados a esta torre</p>
+              <p>No hay roles asignados a esta área</p>
             </div>
           )}
         </CardContent>

@@ -60,7 +60,7 @@ export function UserTable({ users, onEdit, onDelete, onViewDetails, onActivate,o
               <TableCell className="text-sm">{user.email}</TableCell>
               <TableCell className="text-sm">{user.phone}</TableCell>
               <TableCell>
-                <Badge variant={user.active ? "default" : "secondary"} className={user.active ? "bg-accent" : ""}>
+                <Badge variant={user.active ? "success" : "secondary"}>
                   {user.active ? "Activo" : "Inactivo"}
                 </Badge>
               </TableCell>

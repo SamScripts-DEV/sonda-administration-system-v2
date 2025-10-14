@@ -11,19 +11,19 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0 0);
   /* Updated primary color to #005af9 corporate blue */
-  --primary: oklch(0.54 0.19 259.6);
+  --primary: #1a5de6;
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.96 0 0);
   --secondary-foreground: oklch(0.22 0 0);
   --muted: oklch(0.96 0 0);
   --muted-foreground: oklch(0.45 0 0);
   /* Added teal accent color for secondary actions */
-  --accent: oklch(0.65 0.15 162);
-  --accent-foreground: oklch(1 0 0);
+  --accent: #e5e7eb;
+  --accent-foreground: #222;
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.92 0 0);
-  --input: oklch(1 0 0);
+  --input: oklch(0.94 0 0);
   --ring: oklch(0.45 0.18 258 / 0.5);
   --chart-1: oklch(0.45 0.18 258);
   --chart-2: oklch(0.65 0.15 162);
@@ -124,4 +124,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.text-success {
+  color: #10b981; /* Ejemplo: Tailwind emerald-500 o el verde que usabas antes */
 }

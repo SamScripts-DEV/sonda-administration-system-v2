@@ -18,7 +18,10 @@ export function useFetchUsers() {
 export function useUsersForSelect() {
     return useQuery({
         queryKey: ["users-for-select"],
-        queryFn: fetchUsersForSelect,
+        queryFn: async () => {
+            const res = await fetchUsersForSelect();
+            return res.data ?? [];
+        },
     })
 }
 

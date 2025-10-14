@@ -81,7 +81,7 @@ export function AreaManagementDashboard({ initialAreas }: { initialAreas: Area[]
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Buscar torres..."
+              placeholder="Buscar áreas..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 border-gray-300"
@@ -93,7 +93,7 @@ export function AreaManagementDashboard({ initialAreas }: { initialAreas: Area[]
             <DialogTrigger asChild>
               <Button className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
-                Nueva Torre
+                Nueva Área
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -196,12 +196,12 @@ export function AreaManagementDashboard({ initialAreas }: { initialAreas: Area[]
               <Building className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No se encontraron áreas</h3>
               <p className="text-muted-foreground mb-4">
-                {searchTerm ? "Intenta con otros términos de búsqueda" : "Comienza creando tu primera torre"}
+                {searchTerm ? "Intenta con otros términos de búsqueda" : "Comienza creando tu primera área"}
               </p>
               {!searchTerm && (
                 <Button onClick={() => setIsCreateDialogOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Nueva Torre
+                  Nueva Área
                 </Button>
               )}
             </CardContent>

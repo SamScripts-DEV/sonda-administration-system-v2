@@ -46,6 +46,14 @@ export const endpoints = {
         getPermissions: "/permissions",
 
         
+    },
+    vacation: {
+        getVacations: "/vacations",
+        createVacationRequest: "/vacations",
+        updateVacationRequest: (id: string) => `/vacations/${id}`,
+        approveOrRejectVacationRequest: (id: string) => `/vacations/approve/${id}`,
+        deleteVacationRequest: (id: string) => `/vacations/${id}`,
+        
     }
 
 }

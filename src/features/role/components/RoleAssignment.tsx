@@ -160,7 +160,7 @@ export function RoleAssignment({ type, role, areas = [], permissions = [], onSub
             <div className="space-y-2">
               <Label>Área</Label>
               <Select value={selectedArea} onValueChange={setSelectedArea}>
-                <SelectTrigger className="border-gray-300">
+                <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Área" />
                 </SelectTrigger>
                 <SelectContent>
@@ -183,7 +183,7 @@ export function RoleAssignment({ type, role, areas = [], permissions = [], onSub
               placeholder={type === "users" ? "Buscar usuarios..." : "Buscar permisos..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-gray-300"
+              className="pl-10"
             />
           </div>
 

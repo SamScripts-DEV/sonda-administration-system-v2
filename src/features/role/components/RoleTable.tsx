@@ -50,7 +50,7 @@ export function RoleTable({
             <TableHead>Nombre</TableHead>
             <TableHead>Descripción</TableHead>
             <TableHead>Alcance</TableHead>
-            <TableHead>Torres</TableHead>
+            <TableHead>Áreas</TableHead>
             <TableHead>Usuarios</TableHead>
             <TableHead>Permisos</TableHead>
             <TableHead>Creado</TableHead>
@@ -67,7 +67,7 @@ export function RoleTable({
                 </div>
               </TableCell>
               <TableCell>
-                <Badge variant={role.scope === "GLOBAL" ? "default" : "secondary"}>
+                <Badge variant={role.scope === "GLOBAL" ? "default" : "success"}>
                   {role.scope === "GLOBAL" ? "Global" : "Local"}
                 </Badge>
               </TableCell>

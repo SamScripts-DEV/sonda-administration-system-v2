@@ -49,10 +49,10 @@ export function RoleDetails({ role, areas, onRemoveUser, onRemovePermission }: R
           <div className="flex items-start justify-between">
             <div className="space-y-2">
               <CardTitle className="text-2xl flex items-center gap-2">
-                <Shield className="h-6 w-6 text-primary" />
+                <Shield className={`h-6 w-6 text-primary ${role.scope === "GLOBAL" ? "text-default" : "text-success"}`} />
                 {role.name}
               </CardTitle>
-              <Badge variant={role.scope === "GLOBAL" ? "default" : "secondary"} className="w-fit">
+              <Badge variant={role.scope === "GLOBAL" ? "default" : "success"} className="w-fit">
                 {role.scope === "GLOBAL" ? "Rol Global" : "Rol Local"}
               </Badge>
             </div>
@@ -95,7 +95,7 @@ export function RoleDetails({ role, areas, onRemoveUser, onRemovePermission }: R
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Building className="h-5 w-5" />
-              Torres Asignadas
+              Areas Asignadas
             </CardTitle>
           </CardHeader>
           <CardContent>

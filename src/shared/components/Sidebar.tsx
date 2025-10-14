@@ -22,7 +22,12 @@ import {
     Shield,
     Building,
     Briefcase,
-    Container
+    Container,
+    UserCog,
+    Building2,
+    UserSquare,
+    CalendarCheck,
+    SlidersHorizontal
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
@@ -74,18 +79,28 @@ const menuSections: MenuSection[] = [
         title: "Gestión",
         items: [
             {
-                icon: <LayoutDashboard />,
+                icon: <SlidersHorizontal />,
                 label: "Administración",
                 subItems: [
-                    { icon: <UserCheck />, label: "Usuarios", href: "/users" },
+                    { icon: <UserCog />, label: "Usuarios", href: "/users" },
                     { icon: <Shield />, label: "Roles y Permisos", href: "/roles" },
                     //{ icon: <Container />, label: "Departamentos", href: "/users" },
-                    { icon: <Building />, label: "Areas", href: "/areas" },
+                    { icon: <Building2 />, label: "Áreas", href: "/areas" },
                     //{ icon: <Briefcase />, label: "Cargos", href: "/users" },
                 ],
             },
+            {
+                icon: <UserSquare />,
+                label: "Recursos Humanos",
+                subItems: [
+                    {icon: <Plane />, label: "Vacaciones", href: "/vacations"},
+                    {icon: <CalendarCheck/>, label: "Feriados"}
+                ]
+
+            }
         ],
     },
+
 
 ]
 
@@ -243,7 +258,7 @@ export default function Sidebar({ isHidden = false }: { isHidden?: boolean }) {
                                 )}
                                 {/* Fallback visible si no hay imagen o aún no cargó */}
                                 {(!user?.imageUrl || !imgLoaded) && (
-                                    <AvatarFallback className="bg-blue-600 text-white">
+                                    <AvatarFallback className="bg-primary text-white">
                                         {user ? getInitials(user.fullName) : " "}
                                     </AvatarFallback>
                                 )}
@@ -290,7 +305,7 @@ function NavItem({ item, isExpanded, active, onToggleSubMenu, isSubMenuExpanded 
             className={cn(
                 "w-full justify-start h-10 px-3",
                 !isExpanded && "justify-center px-2",
-                active && "bg-blue-600 text-white hover:bg-blue-700",
+                active && "bg-primary text-white",
             )}
             onClick={() => hasSubItems && onToggleSubMenu(item.label)}
         >

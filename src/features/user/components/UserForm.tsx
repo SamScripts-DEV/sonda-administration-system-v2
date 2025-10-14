@@ -149,7 +149,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.firstName}
                                 onChange={(e) => handleInputChange("firstName", e.target.value)}
                                 required
-                                className="border-gray-300"
+
                             />
                         </div>
                         <div>
@@ -159,7 +159,6 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.lastName}
                                 onChange={(e) => handleInputChange("lastName", e.target.value)}
                                 required
-                                className="border-gray-300"
                             />
                         </div>
                     </div>
@@ -172,7 +171,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.username}
                                 onChange={(e) => handleInputChange("username", e.target.value)}
                                 required
-                                className="border-gray-300"
+
                             />
                         </div>
                         <div>
@@ -182,7 +181,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.nationalId}
                                 onChange={(e) => handleInputChange("nationalId", e.target.value)}
                                 required
-                                className="border-gray-300"
+
                             />
                         </div>
                     </div>
@@ -196,7 +195,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.email}
                                 onChange={(e) => handleInputChange("email", e.target.value)}
                                 required
-                                className="border-gray-300"
+
                             />
                         </div>
                         <div>
@@ -206,7 +205,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.phone}
                                 onChange={(e) => handleInputChange("phone", e.target.value)}
                                 required
-                                className="border-gray-300"
+
                             />
                         </div>
                     </div>
@@ -220,7 +219,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.passwordHash}
                                 onChange={(e) => handleInputChange("passwordHash", e.target.value)}
                                 required={!user}
-                                className="border-gray-300"
+
                             />
                         </div>
                     )}
@@ -250,7 +249,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                             onChange={(e) => handleInputChange("address", e.target.value)}
                             rows={2}
                             required
-                            className="border-gray-300"
+
                         />
                     </div>
 
@@ -262,7 +261,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.city}
                                 onChange={(e) => handleInputChange("city", e.target.value)}
                                 required
-                                className="border-gray-300"
+
                             />
                         </div>
                         <div>
@@ -272,7 +271,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.province}
                                 onChange={(e) => handleInputChange("province", e.target.value)}
                                 required
-                                className="border-gray-300"
+
                             />
                         </div>
                         <div>
@@ -282,7 +281,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 value={formData.country}
                                 onChange={(e) => handleInputChange("country", e.target.value)}
                                 required
-                                className="border-gray-300"
+
                             />
                         </div>
                     </div>
@@ -303,7 +302,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                                 onValueChange={(value) => handleInputChange("departmentId", value)}
                                 required
                             >
-                                <SelectTrigger className="border-gray-300 w-full">
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Seleccionar departamento" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -318,7 +317,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                         <div>
                             <Label htmlFor="position">Cargo</Label>
                             <Select value={formData.positionId} onValueChange={(value) => handleInputChange("positionId", value)}>
-                                <SelectTrigger className="border-gray-300 w-full">
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Seleccionar cargo" />
                                 </SelectTrigger>
                                 <SelectContent>
