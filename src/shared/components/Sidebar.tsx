@@ -27,7 +27,8 @@ import {
     Building2,
     UserSquare,
     CalendarCheck,
-    SlidersHorizontal
+    SlidersHorizontal,
+    Banknote
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
@@ -94,8 +95,9 @@ const menuSections: MenuSection[] = [
                 label: "Recursos Humanos",
                 subItems: [
                     {icon: <Plane />, label: "Vacaciones", href: "/vacations"},
-                    {icon: <CalendarCheck/>, label: "Feriados"}
-                ]
+                    {icon: <CalendarCheck/>, label: "Feriados", href: "/holidays"},
+                    {icon: <Banknote />, label: "Salarios", href: "/salaries"}
+                ] 
 
             }
         ],

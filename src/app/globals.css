@@ -1,6 +1,43 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Scroll fino, elegante y oscuro */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.4);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 100, 100, 0.6);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html {
+  scrollbar-width: thin;
+  /* Firefox */
+  scrollbar-color: rgba(100, 100, 100, 0.4) transparent;
+}
+
+/* Ocultar barra de scroll */
+.hide-scrollbar {
+  /* Firefox */
+  scrollbar-width: none;
+  /* Safari and Chrome */
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -121,11 +158,17 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
 .text-success {
-  color: #10b981; /* Ejemplo: Tailwind emerald-500 o el verde que usabas antes */
+  color: #10b981;
+  /* Ejemplo: Tailwind emerald-500 o el verde que usabas antes */
+}
+
+body {
+  overflow-y: scroll;
 }

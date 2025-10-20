@@ -51,7 +51,7 @@ export async function deleteVacationRequest(id: string): Promise<ApiResponse<voi
     try {
         const response = await api.delete(endpoints.vacation.deleteVacationRequest(id));
         return response.data
-    } catch (error: any) {
+    } catch (error: any) {   
         throw new Error(getErrorMessage(error)); 
     }
 }

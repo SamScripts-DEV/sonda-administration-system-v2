@@ -43,9 +43,7 @@ export const endpoints = {
         removePermissionFromRole: (roleId: string, permissionId: string) => `/roles/${roleId}/permissions/${permissionId}`
     },
     permission: {
-        getPermissions: "/permissions",
-
-        
+        getPermissions: "/permissions",        
     },
     vacation: {
         getVacations: "/vacations",
@@ -54,6 +52,19 @@ export const endpoints = {
         approveOrRejectVacationRequest: (id: string) => `/vacations/approve/${id}`,
         deleteVacationRequest: (id: string) => `/vacations/${id}`,
         
+    },
+    holiday: {
+        getHolidays: "/holidays",
+        createHoliday: "/holidays",
+        updateHoliday: (id: string) => `/holidays/${id}`,
+        deleteHoliday: (id: string) => `/holidays/${id}`,
+    },
+    salary: {
+        getCurrentSalary: (userId: string) => `/salary/current/${userId}`,
+        getHistory: (userId: string) => `/salary/history/${userId}`,
+        getAtDateHistory: (userId: string, date: string) => `/salary/history/${userId}?date=${date}`,
+        getInPeriodHistory: (userId: string, from: string, to: string) => `/salary/history/${userId}?from=${from}&to=${to}`,
+        createSalaryRecord: "/salary",
     }
 
 }

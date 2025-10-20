@@ -64,7 +64,10 @@ export function VacationForm({ vacation, onSubmit, onCancel }: VacationFormProps
       return
     }
 
-    onSubmit(formData)
+    const startDateISO = new Date(`${formData.startDate}T00:00:00`).toISOString()
+    const endDateISO = new Date(`${formData.endDate}T23:59:59`).toISOString()
+
+    onSubmit({ ...formData, startDate: startDateISO, endDate: endDateISO })
   }
 
   const calculateDays = () => {

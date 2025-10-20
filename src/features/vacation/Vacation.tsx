@@ -17,72 +17,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useApproveOrRejectVacation, useCreateVacation, useDeleteVacation, useEditVacation, useFetchVacations } from "./hooks/useVacations"
 import { useFetchUsers } from "@/features/user"
 
-// Mock data
-const mockVacations: VacationRequest[] = [
-    {
-        id: "1",
-        userId: "1",
-        createdById: "1",
-        startDate: "2024-07-15",
-        endDate: "2024-07-29",
-        daysRequested: 10,
-        status: "PENDING",
-        observation: "Vacaciones de verano",
-        createdAt: "2024-06-01T10:00:00Z",
-        updatedAt: "2024-06-01T10:00:00Z",
-        userName: "Ana García",
-        userEmail: "ana.garcia@company.com",
-        createdByName: "Ana García",
-        areaName: "Recursos Humanos",
-        daysUsed: 5,
-        daysAvailable: 22,
-        daysRemaining: 17,
-        daysAssigned: 22,
-        daysExceeded: 0,
-    },
-    {
-        id: "2",
-        userId: "2",
-        createdById: "1",
-        startDate: "2024-08-01",
-        endDate: "2024-08-07",
-        daysRequested: 5,
-        status: "APPROVED",
-        observation: "Viaje familiar",
-        createdAt: "2024-06-15T14:30:00Z",
-        updatedAt: "2024-06-16T09:15:00Z",
-        userName: "Carlos Rodríguez",
-        userEmail: "carlos.rodriguez@company.com",
-        createdByName: "Ana García",
-        areaName: "Tecnología",
-        daysUsed: 8,
-        daysAvailable: 22,
-        daysRemaining: 14,
-        daysAssigned: 22,
-        daysExceeded: 0,
-    },
-    {
-        id: "3",
-        userId: "1",
-        createdById: "1",
-        startDate: "2024-12-20",
-        endDate: "2024-12-31",
-        daysRequested: 8,
-        status: "REJECTED",
-        observation: "Navidad - Rechazado por falta de cobertura",
-        createdAt: "2024-06-20T08:00:00Z",
-        updatedAt: "2024-06-21T10:30:00Z",
-        userName: "Ana García",
-        userEmail: "ana.garcia@company.com",
-        createdByName: "Ana García",
-        areaName: "Recursos Humanos",
-        daysUsed: 5,
-        daysAvailable: 22,
-        daysRemaining: 17,
-        daysAssigned: 22,
-        daysExceeded: 0,
-    },
-]
+
 
 export function VacationManagementDashboard({ initialVacations }: { initialVacations: VacationRequest[] }) {
     const queryClient = useQueryClient()

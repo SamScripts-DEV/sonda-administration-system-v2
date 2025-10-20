@@ -245,3 +245,8 @@ export function userFormDataToFormData(formData: UserFormData, imageFile?: File)
     if (formData.positionId) data.append("positionId", formData.positionId);
     return data;
 }
+
+export function getUserFullName(users: { id: string; fullNames: string }[], userId: string) {
+    const user = users.find(u => u.id === userId);
+    return user ? user.fullNames : "Sistema";
+}
