@@ -1,4 +1,8 @@
+import ShiftConfigPage from "@/app/(sonda)/shift-config/page";
+import { updateArea } from "@/features/area";
 import { addPermissionsToRole } from "@/features/role/services/rolApi";
+import { create } from "domain";
+import { get } from "http";
 
 
 export const endpoints = {
@@ -65,6 +69,28 @@ export const endpoints = {
         getAtDateHistory: (userId: string, date: string) => `/salary/history/${userId}?date=${date}`,
         getInPeriodHistory: (userId: string, from: string, to: string) => `/salary/history/${userId}?from=${from}&to=${to}`,
         createSalaryRecord: "/salary",
+    },
+    shiftConfig: {
+        getShiftTypes: "/shift-type",
+        getShiftTypesById: (shiftTypeId: string) => `/shift-type/${shiftTypeId}`,
+        createShiftType: "/shift-type",
+        updateShiftType: (shiftTypeId: string) => `/shift-type/${shiftTypeId}`,
+        activateShiftType: (shiftTypeId: string) => `/shift-type/activate/${shiftTypeId}`,
+        deleteShiftType: (shiftTypeId: string) => `/shift-type/${shiftTypeId}`,
+        getAreaRoles: "/area-role",
+    },
+    shiftSchedule: {
+        createShiftSchedule: "/shift-schedule",
+        getShiftSchedules: "/shift-schedule",
+        updateShiftSchedule: (shiftScheduleId: string) => `/shift-schedule/${shiftScheduleId}`,
+        deleteShiftSchedule: (shiftScheduleId: string) => `/shift-schedule/${shiftScheduleId}`,
+    },
+    shiftRelationToRole: {
+        createShiftRelationToRole: "/shift-type-role-local",
+        getShiftRelationsToRole: "/shift-type-role-local",
+        updateShiftRelationToRole: (relationId: string) => `/shift-type-role-local/${relationId}`,
+        deleteShiftRelationToRole: (relationId: string) => `/shift-type-role-local/${relationId}`,
     }
+
 
 }

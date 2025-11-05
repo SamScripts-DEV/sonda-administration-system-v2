@@ -28,7 +28,8 @@ import {
     UserSquare,
     CalendarCheck,
     SlidersHorizontal,
-    Banknote
+    Banknote,
+    ClipboardCheck
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
@@ -99,6 +100,14 @@ const menuSections: MenuSection[] = [
                     {icon: <Banknote />, label: "Salarios", href: "/salaries"}
                 ] 
 
+            },
+            {
+                icon: <CalendarClock />,
+                label: "Turnos",
+                subItems: [
+                    {icon: <SlidersHorizontal />, label: "Configuración de Turnos", href: "/shift-config"},
+                    {icon: <ClipboardCheck />, label: "Asignación de Turnos"}
+                ]
             }
         ],
     },
