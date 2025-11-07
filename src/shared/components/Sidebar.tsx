@@ -181,7 +181,7 @@ export default function Sidebar({ isHidden = false }: { isHidden?: boolean }) {
                     </div>
                 ) : (
                     <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <img src="/logoSONDA.png" alt="Logo Sonda" />
+                        <img src="/LogoSONDA.png" alt="Logo Sonda" />
                     </div>
                 )}
             </div>
