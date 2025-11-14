@@ -5,14 +5,18 @@ import { endpoints } from "@/lib/endpoints";
 import { getErrorMessage } from "@/shared/getErrorMessage";
 
 
-export async function fetchHolidays(): Promise<ApiResponse<Holiday[]>> {
+export async function fetchHolidays(year?: number): Promise<ApiResponse<Holiday[]>> {
     try {
-        const response = await api.get<ApiResponse<Holiday[]>>(endpoints.holiday.getHolidays)
-        return response.data
-        
+        let url = endpoints.holiday.getHolidays;
+        if (year && year !== new Date().getFullYear()) {
+            url += `?year=${year}`;
+        }
+        const response = await api.get<ApiResponse<Holiday[]>>(url);
+        return response.data;
+
     } catch (error: any) {
         throw new Error(getErrorMessage(error))
-        
+
     }
 }
 
@@ -20,7 +24,7 @@ export async function createHoliday(data: HolidayFormData): Promise<ApiResponse<
     try {
         const response = await api.post<ApiResponse<Holiday>>(endpoints.holiday.createHoliday, data)
         return response.data
-        
+
     } catch (error) {
         throw new Error(getErrorMessage(error))
     }
@@ -41,5 +45,5 @@ export async function deleteHoliday(id: string): Promise<ApiResponse<string>> {
         return response.data
     } catch (error) {
         throw new Error(getErrorMessage(error))
-    }   
+    }
 }

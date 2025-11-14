@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { activateUser, createUser, deleteUser, fetchUsers, fetchUsersForSelect, updateUser, User, UserFormData } from "@/features/user";
+import { activateUser, createRelationUserTechnicalLevel, createUser, deleteUser, fetchTechnicalLevelForUsers, fetchUsers, fetchUsersForSelect, updateUser, User, UserFormData } from "@/features/user";
 import { toast } from "sonner";
 import { use } from "react";
 
@@ -22,6 +22,16 @@ export function useUsersForSelect() {
             const res = await fetchUsersForSelect();
             return res.data ?? [];
         },
+    })
+}
+
+export function useTechnicalLevelsForSelect() {
+    return useQuery({
+        queryKey: ["technical-levels-for-select"],
+        queryFn: async () => {
+            const res = await fetchTechnicalLevelForUsers();
+            return res.data ?? [];
+        }
     })
 }
 
@@ -249,4 +259,17 @@ export function userFormDataToFormData(formData: UserFormData, imageFile?: File)
 export function getUserFullName(users: { id: string; fullNames: string }[], userId: string) {
     const user = users.find(u => u.id === userId);
     return user ? user.fullNames : "Sistema";
+}
+
+
+export function useAssignTechnicalLevel() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: createRelationUserTechnicalLevel,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["users"] });
+            toast.success("Nivel técnico asignado con éxito");
+        }
+    })
 }

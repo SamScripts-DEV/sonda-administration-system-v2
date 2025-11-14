@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avat
 import { Badge } from "@/shared/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Separator } from "@/shared/components/ui/separator"
-import { User, Mail, Phone, MapPin, Building, Shield } from "lucide-react"
+import { User, Mail, Phone, MapPin, Building, Shield, Award } from "lucide-react"
 import { User as UserProps } from "../types"
 
 interface UserDetailsProps {
@@ -36,9 +36,17 @@ export function UserDetails({ user }: UserDetailsProps) {
                   </h2>
                   <p className="text-muted-foreground">@{user.username}</p>
                 </div>
-                <Badge variant={user.active ? "success" : "secondary"}>
-                  {user.active ? "Activo" : "Inactivo"}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  {user.technicalLevel && (
+                    <Badge className="bg-primary">
+                      <Award className="h-3 w-3 mr-1" />
+                      {user.technicalLevel}
+                    </Badge>
+                  )}
+                  <Badge variant={user.active ? "success" : "secondary"}>
+                    {user.active ? "Activo" : "Inactivo"}
+                  </Badge>
+                </div>
               </div>
               <div className="flex items-center gap-2 text-xs mt-2">
                 <Mail className="h-4 w-4 text-muted-foreground" />

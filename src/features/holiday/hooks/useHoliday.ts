@@ -5,11 +5,11 @@ import { toast } from "sonner";
 
 
 
-export function useFetchHolidays () {
+export function useFetchHolidays (year?: number) {
     return useQuery({
-        queryKey: ["holidays"],
+        queryKey: ["holidays", year],
         queryFn: async () => {
-            const res = await fetchHolidays()
+            const res = await fetchHolidays(year)
             return res.data ?? [] 
 
         },

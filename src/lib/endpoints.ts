@@ -20,6 +20,10 @@ export const endpoints = {
         updateUser: (userId: string) => `/users/${userId}`,
         deleteUser: (userId: string) => `/users/${userId}/delete`,
         activateUser: (userId: string) => `/users/${userId}/activate`,
+        technicalLevel: {
+            getTechnicalLevelForUsers: "/technical-level",
+            createRelationUserTechnicalLevel: "/user-technical-level"
+        }
     },
     areas: {
         getAreas: "/areas",

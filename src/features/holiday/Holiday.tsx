@@ -11,23 +11,26 @@ import { Badge } from "@/shared/components/ui/badge"
 import { SectionTitle } from "@/shared/components/SectionTitle"
 import { useQueryClient } from "@tanstack/react-query"
 import { useFetchHolidays } from "@/features/holiday"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select"
 
 
 
 export function HolidayManagementDashboard({ initialHolidays }: { initialHolidays: Holiday[] }) {
     const queryClient = useQueryClient()
     //const [holidays] = useState<Holiday[]>(mockHolidays)
+    const currentYear = new Date().getFullYear()
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedHoliday, setSelectedHoliday] = useState<Holiday | null>(null)
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
+    const [selectedYear, setSelectedYear] = useState(currentYear)
 
     useEffect(() => {
         queryClient.setQueryData(["holidays"], initialHolidays)
     }, [queryClient])
 
-    const { data: holidays = [] } = useFetchHolidays()
+    const { data: holidays = [] } = useFetchHolidays(selectedYear)
     const { mutate: createHoliday } = useCreateHoliday()
     const { mutate: editHoliday } = useEditHoliday()
     const { mutate: deleteHoliday } = useDeleteHoliday()
@@ -60,7 +63,7 @@ export function HolidayManagementDashboard({ initialHolidays }: { initialHoliday
         return Math.floor(diffMs / oneDayMs) + 1;
     };
 
- 
+
     const formatDateRange = (startDate: string, endDate: string) => {
         const start = new Date(startDate)
         const end = new Date(endDate)
@@ -141,14 +144,31 @@ export function HolidayManagementDashboard({ initialHolidays }: { initialHoliday
 
                 {/* Actions Bar */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                    <div className="relative flex-1 max-w-md">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                        <Input
-                            placeholder="Buscar feriados..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10"
-                        />
+                    <div className="flex gap-2 w-full max-w-md">
+                        <div className="relative flex-1 max-w-md">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                            <Input
+                                placeholder="Buscar feriados..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-10"
+                            />
+                        </div>
+
+                        <Select value={String(selectedYear)} onValueChange={val => setSelectedYear(Number(val))}>
+                            <SelectTrigger className="w-[120px]">
+                                <SelectValue placeholder="Año" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {Array.from({ length: 2030 - currentYear + 1 }, (_, i) => currentYear + i).map(year => (
+                                    <SelectItem key={year} value={String(year)}>
+                                        {year}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+
                     </div>
 
                     <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>

@@ -48,6 +48,8 @@ export interface User {
   }[]
   department?: string
   position?: string
+  technicalLevel?: string
+  technicalLevelId?: string
 }
 
 export interface UserFormData {
@@ -67,4 +69,23 @@ export interface UserFormData {
   areaIds: string[]
   departmentId: string
   positionId?: string
+}
+
+export interface TechnicalLevel{
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export interface CreateRelationUserTechnicalLevelDto {
+  userId: string;
+  technicalLevelId: string;
+}
+
+export interface UserTechnicalLevelResponse {
+  id: string;
+  userId: string;
+  technicalLevelId: string;
+  userName?: string;
+  technicalLevelName?: string;
 }

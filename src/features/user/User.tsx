@@ -4,19 +4,24 @@ import { useEffect, useState } from "react"
 import { Button } from "@/shared/components/ui/button"
 import { Input } from "@/shared/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
-import { UserTable, UserForm, UserDetails, User,
-    useFetchUsers, 
+import {
+    UserTable, UserForm, UserDetails, User,
+    useFetchUsers,
     useCreateUser,
     useEditUser,
     useDeleteUser,
     UserFormData,
     userFormDataToFormData,
-    useActivateUser
- } from "@/features/user"
+    useActivateUser,
+    useTechnicalLevelsForSelect,
+    useAssignTechnicalLevel
+} from "@/features/user"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/components/ui/dialog"
 import { Plus, Search, Users, UserCheck, UserX, Building } from "lucide-react"
+import { TechnicalLevelAssignmentModal } from "./components/UserTechnicalLevelModal"
 import { SectionTitle } from "@/shared/components/SectionTitle"
 import { useQueryClient } from "@tanstack/react-query"
+
 
 
 
@@ -27,16 +32,19 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
+    const [isTechnicalLevelModalOpen, setIsTechnicalLevelModalOpen] = useState(false)
 
     useEffect(() => {
         queryClient.setQueryData(["users"], initialUsers);
     }, [initialUsers, queryClient]);
 
     const { data: users = [] } = useFetchUsers();
-    const {mutate: createUser} = useCreateUser();
-    const {mutate: editUser} = useEditUser();
-    const {mutate: deleteUser} = useDeleteUser();
-    const {mutate: activateUser} = useActivateUser();
+    const { data: technicalLevels = [] } = useTechnicalLevelsForSelect();
+    const { mutate: createUser } = useCreateUser();
+    const { mutate: editUser } = useEditUser();
+    const { mutate: deleteUser } = useDeleteUser();
+    const { mutate: activateUser } = useActivateUser();
+    const { mutate: assignTechnicalLevel } = useAssignTechnicalLevel();
 
 
     users.forEach((user, idx) => {
@@ -56,29 +64,41 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
     const activeUsers = users.filter((user) => user.active).length
     const inactiveUsers = users.filter((user) => !user.active).length
 
-    const handleCreateUser = (formData: UserFormData, imageFile?: File ) => {
-        const data =  userFormDataToFormData(formData, imageFile);
+    const handleCreateUser = (formData: UserFormData, imageFile?: File) => {
+        const data = userFormDataToFormData(formData, imageFile);
         createUser(data, {
             onSuccess: () => setIsCreateDialogOpen(false)
         });
     };
 
 
-    const handleEditUser = (formData: UserFormData, imageFile?: File ) => {
+    const handleEditUser = (formData: UserFormData, imageFile?: File) => {
         if (!selectedUser) return;
         const data = userFormDataToFormData(formData, imageFile);
-        editUser({id: selectedUser.id, formData: data}, {
+        editUser({ id: selectedUser.id, formData: data }, {
             onSuccess: () => setIsEditDialogOpen(false)
         });
 
     }
 
-    const handleDeleteUser = (user:User) => {
+    const handleDeleteUser = (user: User) => {
         deleteUser(user.id)
     }
 
     const handleActivateUser = (user: User) => {
         activateUser(user.id)
+    }
+
+    const handleAssignTechnicalLevel = (userId: string, technicalLevelId: string) => {
+        assignTechnicalLevel(
+            {userId, technicalLevelId},
+            {
+                onSuccess: () => {
+                    setIsTechnicalLevelModalOpen(false)
+                    setSelectedUser(null)
+                }
+            }
+        )
     }
 
     return (
@@ -178,6 +198,10 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
                                 setSelectedUser(user)
                                 setIsDetailsDialogOpen(true)
                             }}
+                            onAssignTechnicalLevel={(user) => {
+                                setSelectedUser(user)
+                                setIsTechnicalLevelModalOpen(true)
+                            }}
                             onAssignRoles={(user) => {
                                 console.log("Assign roles to user:", user.id)
                             }}
@@ -213,6 +237,17 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
                         {selectedUser && <UserDetails user={selectedUser} />}
                     </DialogContent>
                 </Dialog>
+
+                <TechnicalLevelAssignmentModal
+                    isOpen={isTechnicalLevelModalOpen}
+                    user={selectedUser}
+                    onClose={() => {
+                        setIsTechnicalLevelModalOpen(false)
+                        setSelectedUser(null)
+                    }}
+                    onAssign={handleAssignTechnicalLevel}
+                    technicalLevels={technicalLevels}
+                />
             </div>
         </div>
     )

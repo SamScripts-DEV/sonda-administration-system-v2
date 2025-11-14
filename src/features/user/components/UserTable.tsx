@@ -5,8 +5,9 @@ import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu"
-import { Edit, Trash2, Eye, UserPlus, Upload, MoreHorizontal } from "lucide-react"
+import { Edit, Trash2, Eye, UserPlus, Upload, MoreHorizontal, Award } from "lucide-react"
 import type { User } from "@/features/user"
+
 
 interface UserTableProps {
   users: User[]
@@ -16,9 +17,10 @@ interface UserTableProps {
   onViewDetails: (user: User) => void
   onAssignRoles: (user: User) => void
   onUploadImage: (user: User) => void
+  onAssignTechnicalLevel: (user: User) => void
 }
 
-export function UserTable({ users, onEdit, onDelete, onViewDetails, onActivate,onAssignRoles, onUploadImage }: UserTableProps) {
+export function UserTable({ users, onEdit, onDelete, onViewDetails, onActivate, onAssignRoles, onUploadImage, onAssignTechnicalLevel}: UserTableProps) {
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
   }
@@ -98,10 +100,10 @@ export function UserTable({ users, onEdit, onDelete, onViewDetails, onActivate,o
                       <Edit className="mr-2 h-4 w-4" />
                       Editar
                     </DropdownMenuItem>
-                    {/* <DropdownMenuItem onClick={() => onAssignRoles(user)}>
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      Asignar roles
-                    </DropdownMenuItem> */}
+                    <DropdownMenuItem onClick={() => onAssignTechnicalLevel(user)}>
+                      <Award className="mr-2 h-4 w-4" />
+                      Asignar nivel técnico
+                    </DropdownMenuItem>
                     {/* <DropdownMenuItem onClick={() => onUploadImage(user)}>
                       <Upload className="mr-2 h-4 w-4" />
                       Subir imagen

@@ -1,7 +1,8 @@
 import api from "@/lib/axios";
 import { endpoints } from "@/lib/endpoints";
 import { ApiResponse } from "@/shared/types/api";
-import { FindAllForSelectType, User, UserFormData } from "../types";
+import { FindAllForSelectType, TechnicalLevel, User, CreateRelationUserTechnicalLevelDto, UserTechnicalLevelResponse } from "../types";
+import { getErrorMessage } from "@/shared/getErrorMessage";
 
 export async function fetchUsers(): Promise<ApiResponse<User[]>> {
     try {
@@ -97,4 +98,29 @@ export async function activateUser(userId: string): Promise<ApiResponse<string>>
         throw new Error(error.message || "An unexpected error occurred");
     }
 
+}
+
+
+export async function fetchTechnicalLevelForUsers(): Promise<ApiResponse<TechnicalLevel[]>>  {
+    try {
+        const response = await api.get<ApiResponse<TechnicalLevel[]>>(endpoints.users.technicalLevel.getTechnicalLevelForUsers);
+        return response.data;
+        
+    } catch (error: any) {
+        throw new Error(getErrorMessage(error))
+    }
+
+}
+
+
+
+export async function createRelationUserTechnicalLevel(data: CreateRelationUserTechnicalLevelDto): Promise<ApiResponse<UserTechnicalLevelResponse>> {
+    try {
+        const response = await api.post<ApiResponse<UserTechnicalLevelResponse>>(endpoints.users.technicalLevel.createRelationUserTechnicalLevel, data);
+        return response.data
+        
+    } catch (error: any) {
+        throw new Error(getErrorMessage(error))
+        
+    }
 }
