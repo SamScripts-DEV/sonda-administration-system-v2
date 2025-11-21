@@ -244,7 +244,7 @@ export function userFormDataToFormData(formData: UserFormData, imageFile?: File)
     data.append("active", String(formData.active));
     data.append("nationalId", formData.nationalId);
     if (imageFile) {
-        data.append("imageUrl", imageFile);
+        data.append("image", imageFile);
     }
     if (formData.address) data.append("address", formData.address);
     if (formData.city) data.append("city", formData.city);
