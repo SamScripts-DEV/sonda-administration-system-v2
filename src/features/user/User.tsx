@@ -14,13 +14,15 @@ import {
     userFormDataToFormData,
     useActivateUser,
     useTechnicalLevelsForSelect,
-    useAssignTechnicalLevel
+    useAssignTechnicalLevel,
+    useChangeUserPassword
 } from "@/features/user"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/components/ui/dialog"
 import { Plus, Search, Users, UserCheck, UserX, Building } from "lucide-react"
 import { TechnicalLevelAssignmentModal } from "./components/UserTechnicalLevelModal"
 import { SectionTitle } from "@/shared/components/SectionTitle"
 import { useQueryClient } from "@tanstack/react-query"
+import { UserChangePasswordModal } from "./components/UserChangePasswordModal"
 
 
 
@@ -33,6 +35,7 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
     const [isTechnicalLevelModalOpen, setIsTechnicalLevelModalOpen] = useState(false)
+    const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false)
 
     useEffect(() => {
         queryClient.setQueryData(["users"], initialUsers);
@@ -45,6 +48,7 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
     const { mutate: deleteUser } = useDeleteUser();
     const { mutate: activateUser } = useActivateUser();
     const { mutate: assignTechnicalLevel } = useAssignTechnicalLevel();
+    const { mutate: changeUserPassword } = useChangeUserPassword();
 
 
     users.forEach((user, idx) => {
@@ -91,10 +95,22 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
 
     const handleAssignTechnicalLevel = (userId: string, technicalLevelId: string) => {
         assignTechnicalLevel(
-            {userId, technicalLevelId},
+            { userId, technicalLevelId },
             {
                 onSuccess: () => {
                     setIsTechnicalLevelModalOpen(false)
+                    setSelectedUser(null)
+                }
+            }
+        )
+    }
+
+    const handleChangePassword = (userId: string, newPassword: string) => {
+        changeUserPassword(
+            { userId, password: newPassword },
+            {
+                onSuccess: () => {
+                    setIsChangePasswordModalOpen(false)
                     setSelectedUser(null)
                 }
             }
@@ -198,6 +214,10 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
                                 setSelectedUser(user)
                                 setIsDetailsDialogOpen(true)
                             }}
+                            onChangePassword={(user) => {
+                                setSelectedUser(user);
+                                setIsChangePasswordModalOpen(true);
+                            }}
                             onAssignTechnicalLevel={(user) => {
                                 setSelectedUser(user)
                                 setIsTechnicalLevelModalOpen(true)
@@ -247,6 +267,17 @@ export function UserManagementDashboard({ initialUsers }: { initialUsers: User[]
                     }}
                     onAssign={handleAssignTechnicalLevel}
                     technicalLevels={technicalLevels}
+                />
+
+
+                <UserChangePasswordModal
+                    isOpen={isChangePasswordModalOpen}
+                    user={selectedUser}
+                    onClose={() => {
+                        setIsChangePasswordModalOpen(false);
+                        setSelectedUser(null);
+                    }}
+                    onChangePassword={handleChangePassword}
                 />
             </div>
         </div>

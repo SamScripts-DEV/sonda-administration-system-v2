@@ -65,7 +65,7 @@ export async function updateUser(userId: string, formData: FormData): Promise<Ap
         );
         return response.data;
 
-    } catch (error: any) {
+    } catch (error: any) {      
         if (error.response && error.response.data) {
             throw new Error(error.response.data);
         }

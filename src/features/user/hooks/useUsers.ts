@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { activateUser, createRelationUserTechnicalLevel, createUser, deleteUser, fetchTechnicalLevelForUsers, fetchUsers, fetchUsersForSelect, updateUser, User, UserFormData } from "@/features/user";
 import { toast } from "sonner";
-import { use } from "react";
+
 
 export function useFetchUsers() {
     return useQuery({
@@ -213,6 +213,25 @@ export function useActivateUser() {
         }
 
     })
+}
+
+
+export function useChangeUserPassword() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ userId, password}: {userId: string; password: string}) => {
+            const formData = new FormData();
+            formData.append("passwordHash", password);
+            return updateUser(userId, formData);
+        },
+        onSuccess: () => {
+            toast.success("Contraseña actualizada con éxito");
+        },
+        onError: () => {
+            toast.error("Error al actualizar la contraseña. Por favor, inténtalo de nuevo.");
+        }
+    })  
 }
 
 
