@@ -256,14 +256,14 @@ export default function Sidebar({ isHidden = false }: { isHidden?: boolean }) {
                         >
                             <Avatar className="h-8 w-8">
                                 {user?.imageUrl && (
-                                    <Image
+                                    <AvatarImage
                                         src={user.imageUrl}
                                         alt="Avatar"
                                         width={32}
                                         height={32}
                                         className="rounded-full object-cover"
                                         style={{ display: "block" }}
-                                        onLoadingComplete={() => setImgLoaded(true)}
+                                        onLoad={() => setImgLoaded(true)}
                                         onError={() => setImgLoaded(false)}
                                     />
                                 )}
